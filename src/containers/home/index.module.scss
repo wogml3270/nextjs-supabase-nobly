@@ -4,4 +4,13 @@
   justify-content: center;
   align-items: center;
   gap: 30px;
+
+  & span {
+    cursor: pointer;
+
+    &:hover {
+      color: #ccc;
+      text-decoration: underline;
+    }
+  }
 }

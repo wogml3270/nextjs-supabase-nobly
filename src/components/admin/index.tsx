@@ -42,7 +42,7 @@ const AdminHome: React.FC = () => {
         .from("page")
         .insert([{ title: "title value", body: "body value" }])
         .select();
-
+      if (data) console.log(data);
       if (error) throw new Error(error.message);
     } catch (err) {
       console.error("Fetching data failed:", err);

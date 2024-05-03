@@ -1,12 +1,29 @@
-import Link from "next/link";
+'use client';
 
-import styles from "./index.module.scss";
+import { useRouter } from 'next/navigation';
+
+import styles from './index.module.scss';
 
 const Home = () => {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      if (response.ok) {
+        router.push('/auth');
+      }
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
   return (
     <div className={styles.home}>
-      <Link href="/login">Login</Link>
-      <Link href="/admin">Admin</Link>
+      <span onClick={() => router.push('/auth')}>로그인 및 회원가입</span>
+      <span onClick={handleLogout}>로그아웃</span>
+      <span onClick={() => router.push('/admin')}>관리자 페이지</span>
     </div>
   );
 };
