@@ -1,24 +1,22 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest } from 'next/server';
 
-export const middleware = async (req: NextRequest) => {
-  try {
-    const res = NextResponse.next();
-    const supabase = createMiddlewareClient({ req, res });
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+import { updateSession } from '@/utils/supabase/middleware';
 
-    console.log(session);
-    if (!session) {
-      return NextResponse.rewrite(new URL('/auth', req.url));
-    }
-    return res;
-  } catch (error) {
-    console.error(error);
-  }
-};
+export async function middleware(request: NextRequest) {
+  // update user's auth session
+  // eslint-disable-next-line no-return-await
+  return await updateSession(request);
+}
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*).'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

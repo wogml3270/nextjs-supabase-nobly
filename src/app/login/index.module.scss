@@ -1,0 +1,46 @@
+.login_box {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: var(--form-box-bg);
+    border-radius: 15px;
+
+    & .form_input {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--form-label);
+      }
+
+      input {
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+    }
+
+    & .form_button {
+      display: flex;
+      gap: 10px;
+
+      button {
+        border: 0;
+        background-color: var(--form-button-bg);
+        color: var(--form-button-text);
+      }
+    }
+  }
+}

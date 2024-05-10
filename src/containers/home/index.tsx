@@ -9,11 +9,11 @@ const Home = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', {
+      const response = await fetch('/auth/signout', {
         method: 'POST',
       });
       if (response.ok) {
-        router.push('/auth');
+        router.push('/login');
       }
     } catch (error) {
       console.error('Logout failed', error);
@@ -21,9 +21,8 @@ const Home = () => {
   };
   return (
     <div className={styles.home}>
-      <span onClick={() => router.push('/auth')}>로그인 및 회원가입</span>
+      <span onClick={() => router.push('/login')}>로그인</span>
       <span onClick={handleLogout}>로그아웃</span>
-      <span onClick={() => router.push('/admin')}>관리자 페이지</span>
     </div>
   );
 };

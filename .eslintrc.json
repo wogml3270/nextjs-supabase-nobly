@@ -40,14 +40,21 @@
     // 예를 들어, "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx", ".ts", ".tsx"] }]
     // 위 규칙은 JSX를 사용할 수 있는 파일 확장자를 .js, .jsx, .ts, .tsx로 지정
     // 이하 설정들도 비슷한 방식으로 각각의 규칙을 설정
+    "camelcase": "off",
     "arrow-body-style": "off",
     "no-plusplus": "off",
     "react/display-name": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "react/function-component-definition": ["warn", { "namedComponents": "arrow-function" }],
+    "react/function-component-definition": [
+      "warn",
+      { "namedComponents": "arrow-function" }
+    ],
     "react/jsx-one-expression-per-line": "off",
-    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/jsx-filename-extension": [
+      "error",
+      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+    ],
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
     "react/jsx-wrap-multilines": "off",
@@ -65,7 +72,10 @@
       }
     ],
     "import/no-unresolved": ["error", { "ignore": ["^@/"] }],
-    "no-restricted-exports": ["error", { "restrictDefaultExports": { "defaultFrom": false } }],
+    "no-restricted-exports": [
+      "error",
+      { "restrictDefaultExports": { "defaultFrom": false } }
+    ],
     "import/order": [
       "error",
       {

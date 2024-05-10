@@ -1,1 +1,14 @@
-@use "reset.module";
+@use 'reset.module';
+@use 'variable';
+
+// global styles
+button {
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 0.5rem 0.75rem;
+
+  &:hover {
+    opacity: 0.85;
+    transition: 0.3s;
+  }
+}

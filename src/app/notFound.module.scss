@@ -1,0 +1,36 @@
+.notFound {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+
+  h2 {
+    font-size: 3.5rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+  }
+
+  button {
+    padding: 0;
+    border: 0;
+    background-color: #000;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: #646464;
+      transition: all 0.3s;
+    }
+
+    & a {
+      display: block;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      color: #fff;
+    }
+  }
+}
