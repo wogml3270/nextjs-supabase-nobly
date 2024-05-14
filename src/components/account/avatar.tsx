@@ -47,6 +47,7 @@ const Avatar: React.FC<AvatarProps> = ({ uid, url, size, onUpload }) => {
       const fileExt = file.name.split('.').pop();
       const filePath = `${uid}-${Math.random()}.${fileExt}`;
 
+      // supabase storage에 이미지 저장 (AWS S3랑 비슷)
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);

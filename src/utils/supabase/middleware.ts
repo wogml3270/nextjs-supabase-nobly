@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export async function updateSession(request: NextRequest) {
+export const updateSession = async (request: NextRequest) => {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -54,8 +54,7 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // refreshing the auth token
   await supabase.auth.getUser();
 
   return response;
-}
+};

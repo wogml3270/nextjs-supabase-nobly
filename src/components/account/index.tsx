@@ -30,7 +30,7 @@ const AccountForm = ({ user }: { user: User | null }) => {
       setLoading(true);
 
       const { data, error, status } = await supabase
-        .from('profiles')
+        .from('accounts')
         .select(`full_name, username, website, avatar_url`)
         .eq('id', user?.id)
         .single();
@@ -43,10 +43,10 @@ const AccountForm = ({ user }: { user: User | null }) => {
       if (data) {
         // data를 바로 formData 상태에 반영
         setFormData({
-          full_name: data.full_name,
-          username: data.username,
-          website: data.website,
-          avatar_url: data.avatar_url,
+          full_name: data?.full_name,
+          username: data?.username,
+          website: data?.website,
+          avatar_url: data?.avatar_url,
         });
       }
     } catch (error) {
@@ -108,9 +108,9 @@ const AccountForm = ({ user }: { user: User | null }) => {
         <input id='email' type='text' value={user?.email} disabled />
       </div>
       <div>
-        <label htmlFor='fullName'>Full Name</label>
+        <label htmlFor='full_name'>Full Name</label>
         <input
-          id='fullName'
+          id='full_name'
           type='text'
           value={formData?.full_name || ''}
           onChange={handleChange}

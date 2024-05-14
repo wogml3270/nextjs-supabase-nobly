@@ -1,11 +1,11 @@
-import { User } from "firebase/auth";
+import { User } from '@supabase/supabase-js';
 
-import { ValueOf } from ".";
+import { ValueOf } from '.';
 
 export const ROLE = {
-  ROOT_ADMIN: "ROOT_ADMIN",
-  ADMIN: "ADMIN",
-  USER: "USER",
+  ROOT_ADMIN: 'ROOT_ADMIN',
+  ADMIN: 'ADMIN',
+  USER: 'USER',
 };
 
 export type RoleTypes = ValueOf<typeof ROLE>;

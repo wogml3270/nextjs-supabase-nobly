@@ -5,43 +5,38 @@ import { redirect } from 'next/navigation';
 
 import { createClient } from '@/utils/supabase/server';
 
-const supabase = createClient();
-
-// 로그인 요청 함수
 export async function login(formData: FormData) {
-  const { error } = await supabase.auth.signInWithPassword({
+  const supabase = createClient();
+
+  const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-  });
+  };
+
+  const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
     redirect('/error');
   }
 
   revalidatePath('/', 'layout');
-  redirect('/account');
+  redirect('/');
 }
 
-// 이메일 인증 요청 함수
 export async function signup(formData: FormData) {
-  const { error } = await supabase.auth.signUp({
+  const supabase = createClient();
+
+  const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-  });
+  };
+
+  const { error } = await supabase.auth.signUp(data);
 
   if (error) {
     redirect('/error');
   }
 
   revalidatePath('/', 'layout');
-  redirect('/account');
+  redirect('/');
 }
-
-// 깃허브 로그인 요청 함수
-export const githubAuth = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-  });
-
-  if (data) console.log(data);
-};

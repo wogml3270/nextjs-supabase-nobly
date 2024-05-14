@@ -1,22 +1,20 @@
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 
 import { updateSession } from '@/utils/supabase/middleware';
 
-export async function middleware(request: NextRequest) {
-  // update user's auth session
-  // eslint-disable-next-line no-return-await
-  return await updateSession(request);
-}
+export const middleware = async (request: NextRequest) => {
+  const response = await updateSession(request);
+
+  // 사용자가 로그인되어 있고 로그인 페이지로 접근하려고 하는 경우 홈페이지로 리다이렉트
+  if (request.nextUrl.pathname.startsWith('/login') && request.cookies.has('sb:token')) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  return response;
+};
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

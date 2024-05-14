@@ -1,16 +1,23 @@
 .home {
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 30px;
-
-  & span {
+  h1 {
+    font-size: 30px;
+  }
+  span {
+    cursor: pointer;
+  }
+  a {
     cursor: pointer;
 
     &:hover {
       color: #ccc;
       text-decoration: underline;
+      transition: 0.3s;
     }
   }
 }

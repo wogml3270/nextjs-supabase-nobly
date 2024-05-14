@@ -1,6 +1,4 @@
-'use client';
-
-import { githubAuth, login, signup } from './actions';
+import { login, signup } from './actions';
 import styles from './index.module.scss';
 
 const LoginPage = () => {
@@ -20,7 +18,6 @@ const LoginPage = () => {
           <button formAction={signup}>회원가입</button>
         </div>
       </form>
-      <button onClick={githubAuth}>github login</button>
     </div>
   );
 };
