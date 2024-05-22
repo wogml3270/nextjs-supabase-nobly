@@ -1,5 +1,7 @@
+import { Error } from '@/components/error';
+
 const ErrorPage = () => {
-  return <p style={{ color: 'red', fontSize: '3rem' }}>에러에러에러에러에러에러에러</p>;
+  return <Error />;
 };
 
 export default ErrorPage;

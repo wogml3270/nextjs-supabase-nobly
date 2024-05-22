@@ -1,7 +1,10 @@
+// 현재 사용하지 않는 코드 로직
+// 만약 휴대폰 otp 인증이 요구사항에 추가될 때, 활성화
+
 import { type EmailOtpType } from '@supabase/supabase-js';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { createClient } from '@/utils/supabase/server';
+import { createServer } from '@/utils/supabase/server';
 
 // Creating a handler to a GET request to route /auth/confirm
 export async function GET(request: NextRequest) {
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
   redirectTo.searchParams.delete('type');
 
   if (token_hash && type) {
-    const supabase = createClient();
+    const supabase = createServer();
 
     const { error } = await supabase.auth.verifyOtp({
       type,

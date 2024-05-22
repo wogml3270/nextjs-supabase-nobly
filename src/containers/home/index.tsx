@@ -2,17 +2,16 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 import { createClient } from '@/utils/supabase/client';
-import { api } from '@/services';
 
 import styles from './index.module.scss';
+import { Button, SignoutButton } from '@/components/button';
 
 const Home = () => {
   const supabase = createClient();
-  const router = useRouter();
-  const [userInfo, setUserInfo] = useState<object | null>();
+  const [userInfo, setUserInfo] = useState<User>();
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -28,31 +27,23 @@ const Home = () => {
     getUserInfo();
   }, [supabase.auth]);
 
-  const handleSignOut = async () => {
-    try {
-      const response = await api.post('/auth/signout');
-      if (response.status === 200) {
-        console.log('로그아웃 성공');
-        setUserInfo(null);
-        router.refresh();
-      } else {
-        console.log('로그아웃 실패');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className={styles.home}>
       <h1>Home Page</h1>
       {userInfo && userInfo ? (
         <>
-          <span onClick={handleSignOut}>SignOut</span>
-          <Link href='/account'>Profile</Link>
+          <h2>로그인 되었습니다</h2>
+          <p>{userInfo?.user_metadata.email} 님</p>
+          <p>마지막 로그인 시간: {userInfo?.last_sign_in_at}</p>
+          <SignoutButton>로그아웃</SignoutButton>
+          <Link href='/account'>
+            <Button>프로필</Button>
+          </Link>
         </>
       ) : (
-        <Link href='/login'>Login</Link>
+        <Link href='/login'>
+          <Button>로그인</Button>
+        </Link>
       )}
     </div>
   );

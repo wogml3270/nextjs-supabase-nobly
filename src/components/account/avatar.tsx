@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+import defaultImg from '@public/default_img.png';
 import { createClient } from '@/utils/supabase/client';
 
 interface AvatarProps {
@@ -10,12 +11,22 @@ interface AvatarProps {
   url: string | null;
   size: number;
   onUpload: (url: string) => void;
+  className: string;
+  uploading: boolean;
+  setUploading: (uploading: boolean) => void;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ uid, url, size, onUpload }) => {
+const Avatar: React.FC<AvatarProps> = ({
+  uid,
+  url,
+  size,
+  onUpload,
+  className,
+  uploading,
+  setUploading,
+}) => {
   const supabase = createClient();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(url);
-  const [uploading, setUploading] = useState<boolean>(false);
 
   useEffect(() => {
     const downloadImage = async (path: string) => {
@@ -46,6 +57,7 @@ const Avatar: React.FC<AvatarProps> = ({ uid, url, size, onUpload }) => {
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
       const filePath = `${uid}-${Math.random()}.${fileExt}`;
+      setUploading(true);
 
       // supabase storage에 이미지 저장 (AWS S3랑 비슷)
       const { error: uploadError } = await supabase.storage
@@ -65,7 +77,7 @@ const Avatar: React.FC<AvatarProps> = ({ uid, url, size, onUpload }) => {
   };
 
   return (
-    <div>
+    <div className={className}>
       {avatarUrl ? (
         <Image
           width={size}
@@ -75,7 +87,13 @@ const Avatar: React.FC<AvatarProps> = ({ uid, url, size, onUpload }) => {
           style={{ height: size, width: size }}
         />
       ) : (
-        <div style={{ height: size, width: size }} />
+        <Image
+          width={size}
+          height={size}
+          src={defaultImg}
+          alt='default Avatar'
+          style={{ height: size, width: size }}
+        />
       )}
       <div style={{ width: size }}>
         <label htmlFor='single'>{uploading ? 'Uploading ...' : 'Upload'}</label>

@@ -1,15 +1,21 @@
-import { createClient } from '@/utils/supabase/server';
+import { createServer } from '@/utils/supabase/server';
 
 import AccountForm from '@/components/account';
+import AccountDetailsPage from '@/components/account/detail';
 
 const Account = async () => {
-  const supabase = createClient();
+  const supabase = createServer();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return <AccountForm user={user} />;
+  return (
+    <div>
+      <AccountForm user={user} />
+      <AccountDetailsPage user={user} />
+    </div>
+  );
 };
 
 export default Account;

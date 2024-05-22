@@ -1,3 +1,5 @@
+'use client';
+
 import { login, signup } from './actions';
 import styles from './index.module.scss';
 

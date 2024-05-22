@@ -1,151 +1,161 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, Suspense } from 'react';
 import { type User } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
 
 import { createClient } from '@/utils/supabase/client';
+import { UserType } from '@/types/account';
 
 import Avatar from './avatar';
+import styles from './index.module.scss';
+import { Button, SignoutButton } from '@/components/button';
+import Loading from '@/app/loading';
 
-interface FormData {
-  full_name: string | null;
-  username: string | null;
-  website: string | null;
-  avatar_url: string | null;
+interface AccountFormProps {
+  user: User | null;
 }
 
-const AccountForm = ({ user }: { user: User | null }) => {
+const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
   const supabase = createClient();
-  const [loading, setLoading] = useState<boolean>(true);
-  // formData 상태를 객체로 관리
-  const [formData, setFormData] = useState<FormData>({
-    full_name: null,
+
+  const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [formData, setFormData] = useState<UserType>({
+    gender: null,
     username: null,
-    website: null,
+    phone: null,
     avatar_url: null,
   });
+  const [tempAvatarUrl, setTempAvatarUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
 
-  const getProfile = useCallback(async () => {
-    try {
-      setLoading(true);
+  const fetchProfile = useCallback(async () => {
+    if (!user) return;
+    setIsLoading(true);
 
-      const { data, error, status } = await supabase
-        .from('accounts')
-        .select(`full_name, username, website, avatar_url`)
-        .eq('id', user?.id)
-        .single();
+    const { data, error, status } = await supabase
+      .from('profiles')
+      .select('gender, username, phone, avatar_url')
+      .eq('id', user.id)
+      .single();
 
-      if (error && status !== 406) {
-        console.log(error);
-        throw error;
-      }
-
-      if (data) {
-        // data를 바로 formData 상태에 반영
-        setFormData({
-          full_name: data?.full_name,
-          username: data?.username,
-          website: data?.website,
-          avatar_url: data?.avatar_url,
-        });
-      }
-    } catch (error) {
-      alert('Error loading user data!');
-    } finally {
-      setLoading(false);
+    if (error && status !== 406) {
+      console.error(error);
+      alert('에러 발생');
     }
+
+    if (data) {
+      setFormData(data);
+    }
+
+    setIsLoading(false);
   }, [user, supabase]);
 
   useEffect(() => {
-    getProfile();
-  }, [user, getProfile]);
+    fetchProfile();
+  }, [fetchProfile]);
 
-  async function updateProfile() {
-    try {
-      setLoading(true);
+  const updateProfile = async () => {
+    if (!user) return;
 
-      const updatedData = {
-        ...formData,
-        id: user?.id,
-        updated_at: new Date().toISOString(),
-      };
+    const updatedData = {
+      ...formData,
+      avatar_url: tempAvatarUrl ?? formData.avatar_url,
+      id: user.id,
+      updated_at: new Date().toISOString(),
+    };
 
-      const { error } = await supabase.from('profiles').upsert(updatedData);
+    const { error } = await supabase.from('profiles').upsert(updatedData);
 
-      if (error) throw error;
-      alert('정보 수정 완료');
-    } catch (error) {
-      alert('정보 수정 실패');
-    } finally {
-      setLoading(false);
+    if (error) {
+      console.log(error);
+      alert('프로필 업데이트에 실패했습니다.');
+      setUploading(false);
+      return;
     }
-  }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    alert('프로필이 업데이트 되었습니다.');
+    setTempAvatarUrl(null); // Clear the temporary URL after update
+    setUploading(false);
+    router.refresh();
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value, name, type } = e.target;
+    const fieldName = type === 'radio' ? name : id;
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  };
+
+  const handleAvatarUpload = (url: string) => {
+    setTempAvatarUrl(url); // Store the uploaded URL temporarily
   };
 
   return (
-    <div>
-      <Avatar
-        uid={user?.id ?? null}
-        url={formData.avatar_url}
-        size={150}
-        onUpload={(url) => {
-          setFormData({
-            ...formData,
-            avatar_url: url,
-          });
-          updateProfile();
-        }}
-      />
-      <div>
-        <label htmlFor='email'>Email</label>
-        <input id='email' type='text' value={user?.email} disabled />
-      </div>
-      <div>
-        <label htmlFor='full_name'>Full Name</label>
-        <input
-          id='full_name'
-          type='text'
-          value={formData?.full_name || ''}
-          onChange={handleChange}
+    <div className={styles.profiles}>
+      <Suspense fallback={<Loading />}>
+        <Avatar
+          className={styles.avatar}
+          uid={user?.id ?? null}
+          url={tempAvatarUrl || formData.avatar_url}
+          size={150}
+          onUpload={handleAvatarUpload}
+          uploading={uploading}
+          setUploading={setUploading}
         />
-      </div>
-      <div>
-        <label htmlFor='username'>Username</label>
-        <input
-          id='username'
-          type='text'
-          value={formData?.username || ''}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label htmlFor='website'>Website</label>
-        <input
-          id='website'
-          type='url'
-          value={formData?.website || ''}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <button onClick={updateProfile} disabled={loading}>
-          {loading ? 'Loading ...' : 'Update'}
-        </button>
-      </div>
-
-      <div>
-        <form action='/auth/signout' method='post'>
-          <button type='submit'>Sign out</button>
-        </form>
-      </div>
+        <div>
+          <label htmlFor='email'>이메일</label>
+          <input id='email' type='text' value={user?.email || ''} disabled />
+        </div>
+        <div className={styles.gender_form}>
+          <label>성별</label>
+          <div>
+            <input
+              type='radio'
+              name='gender'
+              value='male'
+              checked={formData.gender === 'male'}
+              onChange={handleInputChange}
+            />
+            <label htmlFor='male'>남성</label>
+          </div>
+          <div>
+            <input
+              type='radio'
+              name='gender'
+              value='female'
+              checked={formData.gender === 'female'}
+              onChange={handleInputChange}
+            />
+            <label htmlFor='female'>여성</label>
+          </div>
+        </div>
+        <div>
+          <label htmlFor='username'>이름</label>
+          <input
+            id='username'
+            type='text'
+            value={formData.username || ''}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label htmlFor='phone'>휴대폰번호</label>
+          <input
+            id='phone'
+            type='text'
+            value={formData.phone || ''}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className={styles.button_group}>
+          <Button onClick={updateProfile} disabled={isLoading}>
+            {isLoading ? 'Loading..' : '완료'}
+          </Button>
+          <SignoutButton />
+        </div>
+      </Suspense>
     </div>
   );
 };

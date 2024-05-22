@@ -4,7 +4,7 @@ import { ValueOf } from '.';
 
 export const ROLE = {
   ROOT_ADMIN: 'ROOT_ADMIN',
-  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
   USER: 'USER',
 };
 
