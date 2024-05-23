@@ -14,4 +14,10 @@ export interface UserType {
   username: string | null;
   phone: string | null;
   avatar_url: string | null;
+  address: string | null;
+  origin_address: string | null;
+  author_type: string | null;
+  age: string | null;
 }
+
+export interface UserDetailType {}

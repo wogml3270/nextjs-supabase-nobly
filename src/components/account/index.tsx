@@ -3,9 +3,11 @@
 import React, { useCallback, useEffect, useState, Suspense } from 'react';
 import { type User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
 
 import { createClient } from '@/utils/supabase/client';
 import { UserType } from '@/types/account';
+import { calculateAgeFromBirthday } from '@/utils/common/calculate';
 
 import Avatar from './avatar';
 import styles from './index.module.scss';
@@ -27,6 +29,10 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
     username: null,
     phone: null,
     avatar_url: null,
+    address: null,
+    origin_address: null,
+    author_type: null,
+    age: null,
   });
   const [tempAvatarUrl, setTempAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -37,7 +43,9 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
 
     const { data, error, status } = await supabase
       .from('profiles')
-      .select('gender, username, phone, avatar_url')
+      .select(
+        'gender, username, phone, avatar_url, address, origin_address, author_type, age',
+      )
       .eq('id', user.id)
       .single();
 
@@ -84,8 +92,22 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, name, type } = e.target;
+    let formattedValue;
+
+    switch (type) {
+      case 'date':
+        formattedValue = dayjs(value).format('YYYY-MM-DD');
+        break;
+      case 'radio':
+        formattedValue = value;
+        break;
+      default:
+        formattedValue = value;
+    }
+
     const fieldName = type === 'radio' ? name : id;
-    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+
+    setFormData((prev) => ({ ...prev, [fieldName]: formattedValue }));
   };
 
   const handleAvatarUpload = (url: string) => {
@@ -104,12 +126,45 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
           uploading={uploading}
           setUploading={setUploading}
         />
+        <div className={styles.gender_form}>
+          <label htmlFor='author_type'>작성자 유형</label>
+          <div>
+            <input
+              type='radio'
+              name='author_type'
+              value='본인'
+              checked={formData.author_type === '본인'}
+              onChange={handleInputChange}
+            />
+            <label htmlFor='본인 작성'>본인 작성</label>
+          </div>
+          <div>
+            <input
+              type='radio'
+              name='author_type'
+              value='부모'
+              checked={formData.author_type === '부모'}
+              onChange={handleInputChange}
+            />
+            <label htmlFor='부모 작성'>부모 작성</label>
+          </div>
+          <div>
+            <input
+              type='radio'
+              name='author_type'
+              value='기타'
+              checked={formData.author_type === '기타'}
+              onChange={handleInputChange}
+            />
+            <label htmlFor='기타'>기타</label>
+          </div>
+        </div>
         <div>
           <label htmlFor='email'>이메일</label>
-          <input id='email' type='text' value={user?.email || ''} disabled />
+          <input type='text' id='email' value={user?.email || ''} disabled />
         </div>
         <div className={styles.gender_form}>
-          <label>성별</label>
+          <label htmlFor='gender'>성별</label>
           <div>
             <input
               type='radio'
@@ -134,8 +189,8 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
         <div>
           <label htmlFor='username'>이름</label>
           <input
-            id='username'
             type='text'
+            id='username'
             value={formData.username || ''}
             onChange={handleInputChange}
           />
@@ -143,9 +198,43 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
         <div>
           <label htmlFor='phone'>휴대폰번호</label>
           <input
-            id='phone'
             type='text'
+            id='phone'
             value={formData.phone || ''}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label htmlFor='age'>나이</label>
+          <input
+            type='date'
+            id='age'
+            value={formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : ''}
+            onChange={handleInputChange}
+          />
+          <span>
+            만{' '}
+            {calculateAgeFromBirthday(
+              formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : '',
+            )}{' '}
+            세
+          </span>
+        </div>
+        <div>
+          <label htmlFor='address'>현재 거주지</label>
+          <input
+            type='text'
+            id='address'
+            value={formData.address || ''}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label htmlFor='address'>주민등록상 거주지</label>
+          <input
+            type='text'
+            id='origin_address'
+            value={formData.origin_address || ''}
             onChange={handleInputChange}
           />
         </div>
