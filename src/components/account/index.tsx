@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState, Suspense } from 'react';
 import { type User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
+import Image from 'next/image';
 
 import { createClient } from '@/utils/supabase/client';
 import { UserType } from '@/types/account';
@@ -13,6 +14,7 @@ import Avatar from './avatar';
 import styles from './index.module.scss';
 import { Button, SignoutButton } from '@/components/button';
 import Loading from '@/app/loading';
+import { Input, type RadioOption } from '@/components/input';
 
 interface AccountFormProps {
   user: User | null;
@@ -43,15 +45,12 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
 
     const { data, error, status } = await supabase
       .from('profiles')
-      .select(
-        'gender, username, phone, avatar_url, address, origin_address, author_type, age',
-      )
+      .select('*')
       .eq('id', user.id)
       .single();
 
     if (error && status !== 406) {
       console.error(error);
-      alert('에러 발생');
     }
 
     if (data) {
@@ -62,8 +61,10 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
   }, [user, supabase]);
 
   useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    if (user?.id) {
+      fetchProfile();
+    }
+  }, [fetchProfile, user?.id]);
 
   const updateProfile = async () => {
     if (!user) return;
@@ -91,28 +92,25 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value, name, type } = e.target;
-    let formattedValue;
+    const { name, value, type } = e.target;
 
-    switch (type) {
-      case 'date':
-        formattedValue = dayjs(value).format('YYYY-MM-DD');
-        break;
-      case 'radio':
-        formattedValue = value;
-        break;
-      default:
-        formattedValue = value;
+    if (type === 'date') {
+      dayjs(value).format('YYYY-MM-DD');
     }
 
-    const fieldName = type === 'radio' ? name : id;
-
-    setFormData((prev) => ({ ...prev, [fieldName]: formattedValue }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAvatarUpload = (url: string) => {
-    setTempAvatarUrl(url); // Store the uploaded URL temporarily
-  };
+  const genderOptions: RadioOption[] = [
+    { value: 'male', label: '남' },
+    { value: 'famale', label: '여' },
+  ];
+
+  const authorOptions: RadioOption[] = [
+    { value: '본인', label: '본인 작성' },
+    { value: '부모', label: '부모 작성' },
+    { value: '기타', label: '기타' },
+  ];
 
   return (
     <div className={styles.profiles}>
@@ -122,125 +120,73 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
           uid={user?.id ?? null}
           url={tempAvatarUrl || formData.avatar_url}
           size={150}
-          onUpload={handleAvatarUpload}
+          onUpload={(url: string) => setTempAvatarUrl(url)}
           uploading={uploading}
           setUploading={setUploading}
         />
-        <div className={styles.gender_form}>
-          <label htmlFor='author_type'>작성자 유형</label>
-          <div>
-            <input
-              type='radio'
-              name='author_type'
-              value='본인'
-              checked={formData.author_type === '본인'}
-              onChange={handleInputChange}
-            />
-            <label htmlFor='본인 작성'>본인 작성</label>
-          </div>
-          <div>
-            <input
-              type='radio'
-              name='author_type'
-              value='부모'
-              checked={formData.author_type === '부모'}
-              onChange={handleInputChange}
-            />
-            <label htmlFor='부모 작성'>부모 작성</label>
-          </div>
-          <div>
-            <input
-              type='radio'
-              name='author_type'
-              value='기타'
-              checked={formData.author_type === '기타'}
-              onChange={handleInputChange}
-            />
-            <label htmlFor='기타'>기타</label>
-          </div>
-        </div>
-        <div>
-          <label htmlFor='email'>이메일</label>
-          <input type='text' id='email' value={user?.email || ''} disabled />
-        </div>
-        <div className={styles.gender_form}>
-          <label htmlFor='gender'>성별</label>
-          <div>
-            <input
-              type='radio'
-              name='gender'
-              value='male'
-              checked={formData.gender === 'male'}
-              onChange={handleInputChange}
-            />
-            <label htmlFor='male'>남성</label>
-          </div>
-          <div>
-            <input
-              type='radio'
-              name='gender'
-              value='female'
-              checked={formData.gender === 'female'}
-              onChange={handleInputChange}
-            />
-            <label htmlFor='female'>여성</label>
-          </div>
-        </div>
-        <div>
-          <label htmlFor='username'>이름</label>
-          <input
-            type='text'
-            id='username'
-            value={formData.username || ''}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label htmlFor='phone'>휴대폰번호</label>
-          <input
-            type='text'
-            id='phone'
-            value={formData.phone || ''}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label htmlFor='age'>나이</label>
-          <input
-            type='date'
-            id='age'
-            value={formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : ''}
-            onChange={handleInputChange}
-          />
-          <span>
-            만{' '}
-            {calculateAgeFromBirthday(
-              formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : '',
-            )}{' '}
-            세
-          </span>
-        </div>
-        <div>
-          <label htmlFor='address'>현재 거주지</label>
-          <input
-            type='text'
-            id='address'
-            value={formData.address || ''}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label htmlFor='address'>주민등록상 거주지</label>
-          <input
-            type='text'
-            id='origin_address'
-            value={formData.origin_address || ''}
-            onChange={handleInputChange}
-          />
-        </div>
+        <Input
+          type='radio'
+          label='작성자 유형'
+          name='author_type'
+          value={formData.author_type || ''}
+          onChange={handleInputChange}
+          options={authorOptions}
+        />
+
+        <Input type='text' label='이메일' value={user?.email} disabled />
+        <Input
+          type='radio'
+          label='성별'
+          name='gender'
+          value={formData.gender || ''}
+          onChange={handleInputChange}
+          options={genderOptions}
+        />
+        <Input
+          type='text'
+          label='이름'
+          value={formData.username || ''}
+          name='username'
+          onChange={handleInputChange}
+        />
+        <Input
+          type='text'
+          label='휴대폰번호'
+          value={formData.phone || ''}
+          name='phone'
+          onChange={handleInputChange}
+        />
+        <Input
+          type='date'
+          label='나이'
+          value={formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : ''}
+          name='age'
+          onChange={handleInputChange}
+        />
+        <span>
+          만{' '}
+          {calculateAgeFromBirthday(
+            formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : '',
+          )}{' '}
+          세
+        </span>
+        <Input
+          type='text'
+          label='현재 거주지'
+          value={formData.address || ''}
+          name='address'
+          onChange={handleInputChange}
+        />
+        <Input
+          type='text'
+          label='주민등록상 거주지'
+          value={formData.origin_address || ''}
+          name='origin_address'
+          onChange={handleInputChange}
+        />
         <div className={styles.button_group}>
           <Button onClick={updateProfile} disabled={isLoading}>
-            {isLoading ? 'Loading..' : '완료'}
+            {isLoading ? 'loading...' : '완료'}
           </Button>
           <SignoutButton />
         </div>

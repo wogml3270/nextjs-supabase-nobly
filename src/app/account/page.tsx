@@ -11,7 +11,14 @@ const Account = async () => {
   } = await supabase.auth.getUser();
 
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '30px',
+      }}
+    >
       <AccountForm user={user} />
       <AccountDetailsPage user={user} />
     </div>

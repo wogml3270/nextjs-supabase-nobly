@@ -1,13 +1,14 @@
 .profiles {
-  height: 100vh;
   min-width: 500px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 20px;
   padding: 20px;
+  margin: 1.5rem;
+  border: 1px solid #000;
+  border-radius: 10px;
 
   .avatar {
     position: relative;
@@ -68,18 +69,10 @@
         background-color: #f5f5f5;
       }
     }
-
-    input[type='radio'] {
-      margin-right: 10px;
-    }
   }
   & .button_group {
     flex-direction: row;
     gap: 10px;
-  }
-
-  .gender_form {
-    flex-direction: row;
   }
 
   .avatar {

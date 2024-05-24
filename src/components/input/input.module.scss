@@ -1,0 +1,25 @@
+.input {
+  &_container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+
+  &_label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+
+  &_text {
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+  }
+}
