@@ -10,9 +10,23 @@ export interface UserType {
   avatar_url: string | null; // 프로필 사진
 }
 
+interface MaritalStatusType {
+  status: string; // 결혼 상태
+  reason?: string | null; // 결혼 이유
+  children?: {
+    birth: boolean; // 자녀 출생 여부
+    custody: {
+      self: boolean; // 본인 양육 여부
+      spouse: boolean; // 배우자 양육 여부
+    };
+    sons: number; // 아들 수
+    daughters: number; // 딸 수
+  };
+}
+
 // 회원 상세
 export interface UserDetailType {
-  id: string; // 테이블 고유 식별자 (UUID)
+  id?: string | null;
   partner_id?: string | null; // 교제 상대 ID (UUID)
   membership_papers?: {
     id_card?: string; // 신분증
@@ -24,9 +38,7 @@ export interface UserDetailType {
   } | null;
   membership_fee?: number; // 가입비
   membership_fee_success?: number; // 성혼비
-  another_phone?: {
-    number: string; // 비상 연락처
-  } | null;
+  another_phone?: string[];
   charge_manager?: string | null; // 담당 매니저 이름
   manager_type?: {
     C?: string; // 상담 매니저 이름
@@ -36,19 +48,7 @@ export interface UserDetailType {
   service_period_start?: string | null; // 서비스 계약 시작 날짜 (DATE)
   service_period_end?: string | null; // 서비스 계약 종료 날짜 (DATE)
   memo?: string | null; // 메모
-  marital_status?: {
-    status: string; // 결혼 상태 (초혼, 재혼 등)
-    reason?: string | null; // 결혼 이유
-    children?: {
-      birth: boolean; // 자녀 출생 여부
-      custody: {
-        self: boolean; // 본인 양육 여부
-        spouse: boolean; // 배우자 양육 여부
-      };
-      sons: number; // 아들 수
-      daughters: number; // 딸 수
-    };
-  } | null;
+  marital_status?: MaritalStatusType; // 결혼 상태 JSON
   living_type?: string | null; // 본인 주거 형태 (동거, 독립)
   housing_type?: string | null; // 본인 주거 형태 (자가, 전세, 월세)
   residence_type?: string | null; // 주거 유형 (아파트, 주택 등)

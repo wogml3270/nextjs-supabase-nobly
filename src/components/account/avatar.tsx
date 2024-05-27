@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import defaultImg from '@public/default_img.png';
+import defaultImg from '@public/assets/default_img.png';
 import { createClient } from '@/utils/supabase/client';
 
 interface AvatarProps {

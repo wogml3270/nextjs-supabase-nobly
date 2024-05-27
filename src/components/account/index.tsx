@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useState, Suspense } from 'react';
 import { type User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
-import Image from 'next/image';
 
 import { createClient } from '@/utils/supabase/client';
 import { UserType } from '@/types/account';
@@ -14,7 +13,7 @@ import Avatar from './avatar';
 import styles from './index.module.scss';
 import { Button, SignoutButton } from '@/components/button';
 import Loading from '@/app/loading';
-import { Input, type RadioOption } from '@/components/input';
+import { Input } from '@/components/input';
 
 interface AccountFormProps {
   user: User | null;
@@ -101,17 +100,6 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const genderOptions: RadioOption[] = [
-    { value: 'male', label: '남' },
-    { value: 'famale', label: '여' },
-  ];
-
-  const authorOptions: RadioOption[] = [
-    { value: '본인', label: '본인 작성' },
-    { value: '부모', label: '부모 작성' },
-    { value: '기타', label: '기타' },
-  ];
-
   return (
     <div className={styles.profiles}>
       <Suspense fallback={<Loading />}>
@@ -130,7 +118,11 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
           name='author_type'
           value={formData.author_type || ''}
           onChange={handleInputChange}
-          options={authorOptions}
+          options={[
+            { value: '본인', label: '본인 작성' },
+            { value: '부모', label: '부모 작성' },
+            { value: '기타', label: '기타' },
+          ]}
         />
 
         <Input type='text' label='이메일' value={user?.email} disabled />
@@ -140,7 +132,10 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
           name='gender'
           value={formData.gender || ''}
           onChange={handleInputChange}
-          options={genderOptions}
+          options={[
+            { value: 'male', label: '남' },
+            { value: 'female', label: '여' },
+          ]}
         />
         <Input
           type='text'
