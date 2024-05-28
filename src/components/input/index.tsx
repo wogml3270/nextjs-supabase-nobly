@@ -1,43 +1,10 @@
-/* eslint-disable no-unused-vars */
-
 'use client';
 
 import React from 'react';
 
+import { InputProps, TextareaProps } from '@/types/input';
+
 import styles from './input.module.scss';
-
-export interface InputProps {
-  type: string;
-  label?: string | null;
-  value?: string | number | null;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  id?: string;
-  name?: string;
-  placeholder?: string;
-  readOnly?: boolean;
-  disabled?: boolean;
-  required?: boolean;
-  options?: {
-    value: string;
-    label: string;
-  }[];
-}
-
-export interface TextareaProps {
-  label?: string | null;
-  value?: string | null;
-  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  name?: string;
-  id?: string;
-  placeholder?: string;
-  readOnly?: boolean;
-  disabled?: boolean;
-  required?: boolean;
-  rows?: number;
-  cols?: number;
-  maxLength?: number;
-  minLength?: number;
-}
 
 export const Input: React.FC<InputProps> = ({
   type,
@@ -52,9 +19,9 @@ export const Input: React.FC<InputProps> = ({
   required,
   options,
 }) => {
-  return (
-    <div className={styles.input_container}>
-      {type === 'radio' && options ? (
+  if (type === 'radio' && options) {
+    return (
+      <div className={styles.input_container}>
         <div className={styles.input_radio_wrap}>
           <label className={styles.radio_label}>{label || ''}</label>
           {options.map((option: any) => (
@@ -62,39 +29,65 @@ export const Input: React.FC<InputProps> = ({
               <input
                 type='radio'
                 className={styles.input_radio_option}
-                value={option.value}
+                value={option.value.toString()}
                 checked={value === option.value}
                 onChange={onChange}
-                id={id}
+                id={`${name}_${options.values}`}
                 name={name}
                 readOnly={readOnly}
                 disabled={disabled}
                 required={required}
               />
-              <label htmlFor={option.value} className={styles.radio_label}>
+              <label htmlFor={id} className={styles.radio_label}>
                 {option.label}
               </label>
             </div>
           ))}
         </div>
-      ) : (
-        <>
-          <label htmlFor={name} className={styles.input_label}>
-            {label || ''}
-          </label>
+      </div>
+    );
+  }
+
+  if (type === 'checkbox') {
+    return (
+      <div className={styles.input_container}>
+        <div className={styles.input_checkbox_wrap}>
           <input
-            type={type}
-            className={styles.input_text}
-            value={value ?? ''}
+            type='checkbox'
+            className={styles.input_checkbox}
+            value={typeof value === 'boolean' ? '' : value ?? ''}
+            checked={!!value}
             onChange={onChange}
             id={id}
             name={name}
-            placeholder={placeholder}
             readOnly={readOnly}
             disabled={disabled}
+            required={required}
           />
-        </>
-      )}
+          <label htmlFor={id} className={styles.checkbox_label}>
+            {label}
+          </label>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.input_container}>
+      <label htmlFor={name} className={styles.input_label}>
+        {label || ''}
+      </label>
+      <input
+        type={type}
+        className={styles.input_text}
+        value={typeof value === 'boolean' ? '' : value ?? ''}
+        onChange={onChange}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        readOnly={readOnly}
+        disabled={disabled}
+      />
     </div>
   );
 };

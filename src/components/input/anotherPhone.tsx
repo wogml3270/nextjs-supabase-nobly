@@ -2,6 +2,7 @@
 import React from 'react';
 
 import { Input } from '.';
+import { Button } from '@/components/button';
 
 interface AnotherPhoneProps {
   anotherPhone: string[];
@@ -39,7 +40,10 @@ const AnotherPhone: React.FC<AnotherPhoneProps> = ({ anotherPhone, setFormData }
   return (
     <div>
       {anotherPhone.map((phone, index) => (
-        <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          key={index}
+          style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%' }}
+        >
           <Input
             type='text'
             label={`비상연락처-${index + 1}`}
@@ -47,14 +51,14 @@ const AnotherPhone: React.FC<AnotherPhoneProps> = ({ anotherPhone, setFormData }
             onChange={(e) => handlePhoneChange(index, e)}
             placeholder={`Phone number ${index + 1}`}
           />
-          <button type='button' onClick={() => handleRemovePhone(index)}>
+          <Button type='button' onClick={() => handleRemovePhone(index)}>
             삭제
-          </button>
+          </Button>
         </div>
       ))}
-      <button type='button' onClick={handleAddPhone}>
+      <Button type='button' onClick={handleAddPhone}>
         추가
-      </button>
+      </Button>
     </div>
   );
 };

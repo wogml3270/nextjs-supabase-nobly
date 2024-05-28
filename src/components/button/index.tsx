@@ -4,14 +4,15 @@ import styles from './button.module.scss';
 
 interface ButtonProps {
   children: React.ReactNode;
+  type?: 'button' | 'submit' | 'reset' | undefined;
   onClick?: MouseEventHandler;
   disabled?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({ children, onClick, disabled }) => {
+export const Button: React.FC<ButtonProps> = ({ children, type, onClick, disabled }) => {
   return (
     <div className={styles.button}>
-      <button disabled={disabled} onClick={onClick}>
+      <button type={type} disabled={disabled} onClick={onClick}>
         {children}
       </button>
     </div>

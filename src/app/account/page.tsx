@@ -15,7 +15,8 @@ const Account = async () => {
       style={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
+        height: '100vh',
+        overflowY: 'auto',
         gap: '30px',
       }}
     >

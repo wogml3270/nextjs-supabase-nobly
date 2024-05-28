@@ -103,54 +103,64 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
   return (
     <div className={styles.profiles}>
       <Suspense fallback={<Loading />}>
-        <Avatar
-          className={styles.avatar}
-          uid={user?.id ?? null}
-          url={tempAvatarUrl || formData.avatar_url}
-          size={150}
-          onUpload={(url: string) => setTempAvatarUrl(url)}
-          uploading={uploading}
-          setUploading={setUploading}
-        />
-        <Input
-          type='radio'
-          label='작성자 유형'
-          name='author_type'
-          value={formData.author_type || ''}
-          onChange={handleInputChange}
-          options={[
-            { value: '본인', label: '본인 작성' },
-            { value: '부모', label: '부모 작성' },
-            { value: '기타', label: '기타' },
-          ]}
-        />
-
-        <Input type='text' label='이메일' value={user?.email} disabled />
-        <Input
-          type='radio'
-          label='성별'
-          name='gender'
-          value={formData.gender || ''}
-          onChange={handleInputChange}
-          options={[
-            { value: 'male', label: '남' },
-            { value: 'female', label: '여' },
-          ]}
-        />
-        <Input
-          type='text'
-          label='이름'
-          value={formData.username || ''}
-          name='username'
-          onChange={handleInputChange}
-        />
-        <Input
-          type='text'
-          label='휴대폰번호'
-          value={formData.phone || ''}
-          name='phone'
-          onChange={handleInputChange}
-        />
+        <h1>프로필</h1>
+        <div>
+          <Avatar
+            className={styles.avatar}
+            uid={user?.id ?? null}
+            url={tempAvatarUrl || formData.avatar_url}
+            size={150}
+            onUpload={(url: string) => setTempAvatarUrl(url)}
+            uploading={uploading}
+            setUploading={setUploading}
+          />
+        </div>
+        <div>
+          <Input
+            type='radio'
+            label='작성자 유형'
+            name='author_type'
+            value={formData.author_type || ''}
+            onChange={handleInputChange}
+            options={[
+              { value: '본인', label: '본인 작성' },
+              { value: '부모', label: '부모 작성' },
+              { value: '기타', label: '기타' },
+            ]}
+          />
+        </div>
+        <div>
+          <Input type='text' label='이메일' value={user?.email} disabled />
+        </div>
+        <div>
+          <Input
+            type='radio'
+            label='성별'
+            name='gender'
+            value={formData.gender || ''}
+            onChange={handleInputChange}
+            options={[
+              { value: 'male', label: '남' },
+              { value: 'female', label: '여' },
+            ]}
+          />
+        </div>
+        <div>
+          <Input
+            type='text'
+            label='이름'
+            value={formData.username || ''}
+            name='username'
+            onChange={handleInputChange}
+          />
+          <Input
+            type='text'
+            label='휴대폰번호'
+            value={formData.phone || ''}
+            name='phone'
+            onChange={handleInputChange}
+          />
+        </div>
         <Input
           type='date'
           label='나이'
@@ -165,21 +175,25 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
           )}{' '}
           세
         </span>
-        <Input
-          type='text'
-          label='현재 거주지'
-          value={formData.address || ''}
-          name='address'
-          onChange={handleInputChange}
-        />
-        <Input
-          type='text'
-          label='주민등록상 거주지'
-          value={formData.origin_address || ''}
-          name='origin_address'
-          onChange={handleInputChange}
-        />
-        <div className={styles.button_group}>
+        <div>
+          <Input
+            type='text'
+            label='현재 거주지'
+            value={formData.address || ''}
+            name='address'
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <Input
+            type='text'
+            label='주민등록상 거주지'
+            value={formData.origin_address || ''}
+            name='origin_address'
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
           <Button onClick={updateProfile} disabled={isLoading}>
             {isLoading ? 'loading...' : '완료'}
           </Button>

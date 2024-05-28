@@ -14,6 +14,8 @@ import styles from './index.module.scss';
 import { Input, Textarea } from '@/components/input';
 import { MaritalStatus } from '@/components/input/maritalStatus';
 import AnotherPhone from '@/components/input/anotherPhone';
+import { JobInformation } from './job';
+import { EducationForm } from './education';
 
 interface AccountFormProps {
   user: User | null;
@@ -102,13 +104,18 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
       }));
     }
   };
-  console.log(formData);
+
+  useEffect(() => {
+    console.log(formData?.education);
+  }, [formData]);
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div className={styles.profiles_detail}>
+      <h1>상세 프로필</h1>
       <div>
         <Input
           type='text'
@@ -198,6 +205,70 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
         initialFormData={formData?.marital_status}
         onChange={handleInputChange}
       />
+      <Input
+        type='radio'
+        name='living_type'
+        value={formData?.living_type || ''}
+        label='본인 주거 형태'
+        onChange={handleInputChange}
+        options={[
+          { value: '동거', label: '동거' },
+          { value: '독립', label: '독립' },
+        ]}
+      />
+      <Input
+        type='radio'
+        name='housing_type'
+        value={formData?.housing_type || ''}
+        label='본인 주거 형태'
+        onChange={handleInputChange}
+        options={[
+          { value: '자가', label: '전세' },
+          { value: '전세', label: '전세' },
+          { value: '월세', label: '월세' },
+        ]}
+      />
+      <Input
+        type='radio'
+        name='residence_type'
+        value={formData?.residence_type || ''}
+        label='주거 유형'
+        onChange={handleInputChange}
+        options={[
+          { value: '아파트', label: '아파트' },
+          { value: '주택', label: '주택' },
+          { value: '빌라', label: '빌라' },
+          { value: '다가구', label: '다가구' },
+          { value: '원룸', label: '원룸' },
+          { value: '기타', label: '기타' },
+        ]}
+      />
+      <Input
+        type='number'
+        name='residence_level'
+        value={formData?.residence_level || ''}
+        label='주거지 면적'
+        onChange={handleInputChange}
+      />
+      <Input
+        type='radio'
+        name='parents_owner_check'
+        value={formData?.parents_owner_check || ''}
+        label='거주지 부모 소유'
+        onChange={handleInputChange}
+        options={[
+          { value: true.toString(), label: '예' },
+          { value: false.toString(), label: '아니오' },
+        ]}
+      />
+      <Textarea
+        name='property'
+        value={formData?.property || ''}
+        label='본인 재산 (구체적인 정보 기재)'
+        onChange={handleInputChange}
+      />
+      <JobInformation job={formData?.job} setFormData={setFormData} />
+      <EducationForm education={formData?.education} setFormData={setFormData} />
     </div>
   );
 };

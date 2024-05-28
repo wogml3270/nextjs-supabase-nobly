@@ -1,12 +1,13 @@
 .profiles_detail {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
+  overflow-y: auto;
   gap: 20px;
-  border: 1px solid #000;
+  border: 1px solid #ccc;
   border-radius: 10px;
   padding: 20px;
+  margin: 20px;
 
   & > div {
     display: flex;

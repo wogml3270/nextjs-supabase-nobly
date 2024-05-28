@@ -24,6 +24,22 @@ interface MaritalStatusType {
   };
 }
 
+interface EducationPeriod {
+  name: string;
+  major: string;
+  end_date: string;
+  location: string;
+  graduated: boolean;
+  start_date: string;
+}
+
+interface OverseasExperience {
+  type: string;
+  country: string;
+  end_date: string;
+  start_date: string;
+}
+
 // 회원 상세
 export interface UserDetailType {
   id?: string | null;
@@ -52,39 +68,19 @@ export interface UserDetailType {
   living_type?: string | null; // 본인 주거 형태 (동거, 독립)
   housing_type?: string | null; // 본인 주거 형태 (자가, 전세, 월세)
   residence_type?: string | null; // 주거 유형 (아파트, 주택 등)
-  residence_level?: number | null; // 주거지 평 수
+  residence_level?: number | null; // 주거지 면적 (평 수)
   parents_owner_check?: boolean | null; // 거주지 부모 소유 체크
   property?: string | null; // 본인 재산 (부동산, 주식, 현금 등)
-  education?: {
-    high_school?: {
-      major: string; // 고등학교 전공
-      graduated: boolean; // 졸업 여부
-      location: string; // 고등학교 위치
-      entrance_year: number; // 입학 년도
-      graduation_year: number | null; // 졸업 년도 (null 가능)
-    };
-    college?: {
-      major: string; // 대학 전공
-      graduated: boolean; // 졸업 여부
-      location: string; // 대학 위치
-      entrance_year: number; // 입학 년도
-      graduation_year: number | null; // 졸업 년도 (null 가능)
-    };
-    graduate_school?: {
-      major: string; // 대학원 전공
-      graduated: boolean; // 졸업 여부
-      location: string; // 대학원 위치
-      entrance_year: number; // 입학 년도
-      graduation_year: number | null; // 졸업 년도 (null 가능)
-    };
-  } | null;
   job?: {
     company_name: string; // 회사명
     occupation: string; // 직업/업무 분야
     position: string; // 직위
     employment_type: string; // 고용 형태 (정규직, 계약직 등)
     company_address: string; // 회사 주소
-    career_history: string[]; // 경력 사항 (이전 근무한 회사들)
+    career_history: {
+      name: string;
+      date: string;
+    }[]; // 경력 사항 (이전 근무한 회사들)
     hire_date: string; // 입사 년월
     salary: {
       pre_tax: number; // 세전 연봉
@@ -92,6 +88,14 @@ export interface UserDetailType {
       other_income: number; // 그 외 수입
     };
     years_of_service: number; // 재직 연차
+  } | null;
+  education?: {
+    college: EducationPeriod;
+    phd_school: EducationPeriod;
+    university: EducationPeriod;
+    high_school: EducationPeriod;
+    graduate_school: EducationPeriod;
+    overseas_experience: OverseasExperience[];
   } | null;
   family_info?: Array<{
     relationship: string; // 가족 구성원과의 관계 (부모, 자녀 등)
