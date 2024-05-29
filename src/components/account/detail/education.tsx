@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 
 import { type UserDetailType } from '@/types/account';
@@ -13,118 +14,85 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
   education,
   setFormData,
 }) => {
-  const handleHighSchoolChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
+  // education 체인지 핸들러
+  const handleEducationChange = (level: string, e: any) => {
+    const { name, value, type, checked } = e.target;
+
+    const newValue = type === 'checkbox' ? checked : value; // 체크박스의 경우 checked 값을 사용, 텍스트 입력의 경우 value 값을 사용
+
     setFormData((prevState: any) => ({
       ...prevState,
       education: {
         ...prevState.education,
-        high_school: {
-          ...prevState.education.high_school,
-          [name]: value,
+        [level]: {
+          ...prevState.education[level],
+          [name]: newValue,
         },
       },
     }));
   };
 
-  const handlelCollegeChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevState: any) => ({
-      ...prevState,
-      education: {
-        ...prevState.education,
-        college: {
-          ...prevState.education.college,
-          [name]: value,
-        },
-      },
-    }));
-  };
-  const handlelUniversityChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevState: any) => ({
-      ...prevState,
-      education: {
-        ...prevState.education,
-        university: {
-          ...prevState.education.university,
-          [name]: value,
-        },
-      },
-    }));
-  };
-  const handlelGraduateChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevState: any) => ({
-      ...prevState,
-      education: {
-        ...prevState.education,
-        graduate_school: {
-          ...prevState.education.graduate_school,
-          [name]: value,
-        },
-      },
-    }));
-  };
-  const handlelPhdChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevState: any) => ({
-      ...prevState,
-      education: {
-        ...prevState.education,
-        phd_school: {
-          ...prevState.education.phd_school,
-          [name]: value,
-        },
-      },
-    }));
-  };
+  // 각 체인지 핸들러
+  const handleHighSchoolChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleEducationChange('high_school', e);
+  const handleCollegeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleEducationChange('college', e);
+  const handleUniversityChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleEducationChange('university', e);
+  const handleGraduateChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleEducationChange('graduate_school', e);
+  const handlePhdChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleEducationChange('phd_school', e);
 
+  // 해외 경험 체인지 핸들러
   const handleOverseasExperienceChange = (
     index: number,
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevState: any) => {
-      const newOverseasExperience = [...(prevState?.overseas_experience || [])];
+      const newOverseasExperience = [...(prevState.education?.overseas_experience || [])];
       newOverseasExperience[index] = {
         ...newOverseasExperience[index],
         [name]: value,
       };
       return {
         ...prevState,
-        overseas_experience: newOverseasExperience,
+        education: {
+          ...prevState.education,
+          overseas_experience: newOverseasExperience,
+        },
       };
     });
   };
 
+  // 해외 경험 추가 핸들러
   const addOverseasExperience = () => {
     setFormData((prevState: any) => ({
       ...prevState,
-      overseas_experience: [
-        ...(prevState?.overseas_experience || []),
-        { type: '', country: '', start_date: '', end_date: '' },
-      ],
+      education: {
+        ...prevState.education,
+        overseas_experience: [
+          ...(prevState.education?.overseas_experience || []),
+          { type: '', country: '', start_date: '', end_date: '' },
+        ],
+      },
     }));
   };
 
+  // 해외 경험 삭제 핸들러
   const removeOverseasExperience = (index: number) => {
     setFormData((prevState: any) => {
       const newExperience =
-        prevState?.overseas_experience?.filter((_: any, i: any) => i !== index) || [];
+        prevState.education?.overseas_experience?.filter(
+          (_: any, i: number) => i !== index,
+        ) || [];
       return {
         ...prevState,
-        overseas_experience: newExperience,
+        education: {
+          ...prevState.education,
+          overseas_experience: newExperience,
+        },
       };
     });
   };
@@ -132,10 +100,10 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
   if (!education) return null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <h2>교육 정보</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+      <h1>학력 정보</h1>
       <div>
-        <h3>고등학교</h3>
+        <h2>고등학교</h2>
         <Input
           type='text'
           name='name'
@@ -179,21 +147,20 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
         <Input
           type='checkbox'
           name='graduated'
-          value={education?.high_school?.graduated}
-          //   checked={education?.high_school?.graduated}
+          checked={education?.high_school?.graduated}
           label='졸업 여부 체크'
           onChange={handleHighSchoolChange}
         />
       </div>
       <div>
-        <h3>전문대학</h3>
+        <h2>전문대학</h2>
         <Input
           type='text'
           name='name'
           value={education?.college?.name || ''}
           label='학교명'
           placeholder='학교명 입력'
-          onChange={handlelCollegeChange}
+          onChange={handleCollegeChange}
         />
         <Input
           type='text'
@@ -201,7 +168,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.college?.major || ''}
           label='학과명'
           placeholder='학과명 입력'
-          onChange={handlelCollegeChange}
+          onChange={handleCollegeChange}
         />
         <Input
           type='text'
@@ -209,7 +176,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.college?.location || ''}
           label='소재지'
           placeholder='소재지 입력'
-          onChange={handlelCollegeChange}
+          onChange={handleCollegeChange}
         />
         <Input
           type='date'
@@ -217,7 +184,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.college?.start_date || ''}
           label='입학년도'
           placeholder='입학년도 입력'
-          onChange={handlelCollegeChange}
+          onChange={handleCollegeChange}
         />
         <Input
           type='date'
@@ -225,26 +192,25 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.college?.end_date || ''}
           label='졸업년도'
           placeholder='졸업년도 입력'
-          onChange={handlelCollegeChange}
+          onChange={handleCollegeChange}
         />
         <Input
           type='checkbox'
           name='graduated'
-          value={education?.college?.graduated}
-          //   checked={education?.high_school?.graduated}
+          checked={education?.college?.graduated}
           label='졸업 여부 체크'
-          onChange={handlelCollegeChange}
+          onChange={handleCollegeChange}
         />
       </div>
       <div>
-        <h3>대학교</h3>
+        <h2>대학교</h2>
         <Input
           type='text'
           name='name'
           value={education?.university?.name || ''}
           label='학교명'
           placeholder='학교명 입력'
-          onChange={handlelUniversityChange}
+          onChange={handleUniversityChange}
         />
         <Input
           type='text'
@@ -252,7 +218,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.university?.major || ''}
           label='학과명'
           placeholder='학과명 입력'
-          onChange={handlelUniversityChange}
+          onChange={handleUniversityChange}
         />
         <Input
           type='text'
@@ -260,7 +226,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.university?.location || ''}
           label='소재지'
           placeholder='소재지 입력'
-          onChange={handlelUniversityChange}
+          onChange={handleUniversityChange}
         />
         <Input
           type='date'
@@ -268,7 +234,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.university?.start_date || ''}
           label='입학년도'
           placeholder='입학년도 입력'
-          onChange={handlelUniversityChange}
+          onChange={handleUniversityChange}
         />
         <Input
           type='date'
@@ -276,26 +242,25 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.university?.end_date || ''}
           label='졸업년도'
           placeholder='졸업년도 입력'
-          onChange={handlelUniversityChange}
+          onChange={handleUniversityChange}
         />
         <Input
           type='checkbox'
           name='graduated'
-          value={education?.university?.graduated}
-          //   checked={education?.high_school?.graduated}
+          checked={education?.university?.graduated}
           label='졸업 여부 체크'
-          onChange={handlelUniversityChange}
+          onChange={handleUniversityChange}
         />
       </div>
       <div>
-        <h3>대학원</h3>
+        <h2>대학원</h2>
         <Input
           type='text'
           name='name'
           value={education?.graduate_school?.name || ''}
           label='학교명'
           placeholder='학교명 입력'
-          onChange={handlelGraduateChange}
+          onChange={handleGraduateChange}
         />
         <Input
           type='text'
@@ -303,7 +268,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.graduate_school?.major || ''}
           label='학과명'
           placeholder='학과명 입력'
-          onChange={handlelGraduateChange}
+          onChange={handleGraduateChange}
         />
         <Input
           type='text'
@@ -311,7 +276,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.graduate_school?.location || ''}
           label='소재지'
           placeholder='소재지 입력'
-          onChange={handlelGraduateChange}
+          onChange={handleGraduateChange}
         />
         <Input
           type='date'
@@ -319,7 +284,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.graduate_school?.start_date || ''}
           label='입학년도'
           placeholder='입학년도 입력'
-          onChange={handlelGraduateChange}
+          onChange={handleGraduateChange}
         />
         <Input
           type='date'
@@ -327,26 +292,25 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.graduate_school?.end_date || ''}
           label='졸업년도'
           placeholder='졸업년도 입력'
-          onChange={handlelGraduateChange}
+          onChange={handleGraduateChange}
         />
         <Input
           type='checkbox'
           name='graduated'
-          value={education?.graduate_school?.graduated}
-          //   checked={education?.high_school?.graduated}
+          checked={education?.graduate_school?.graduated}
           label='졸업 여부 체크'
-          onChange={handlelGraduateChange}
+          onChange={handleGraduateChange}
         />
       </div>
       <div>
-        <h3>박사 학위</h3>
+        <h2>박사 학위</h2>
         <Input
           type='text'
           name='name'
           value={education?.phd_school?.name || ''}
           label='학교명'
           placeholder='학교명 입력'
-          onChange={handlelPhdChange}
+          onChange={handlePhdChange}
         />
         <Input
           type='text'
@@ -354,7 +318,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.phd_school?.major || ''}
           label='학과명'
           placeholder='학과명 입력'
-          onChange={handlelPhdChange}
+          onChange={handlePhdChange}
         />
         <Input
           type='text'
@@ -362,7 +326,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.phd_school?.location || ''}
           label='소재지'
           placeholder='소재지 입력'
-          onChange={handlelPhdChange}
+          onChange={handlePhdChange}
         />
         <Input
           type='date'
@@ -370,7 +334,7 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.phd_school?.start_date || ''}
           label='입학년도'
           placeholder='입학년도 입력'
-          onChange={handlelPhdChange}
+          onChange={handlePhdChange}
         />
         <Input
           type='date'
@@ -378,20 +342,62 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
           value={education?.phd_school?.end_date || ''}
           label='졸업년도'
           placeholder='졸업년도 입력'
-          onChange={handlelPhdChange}
+          onChange={handlePhdChange}
         />
         <Input
           type='checkbox'
           name='graduated'
-          value={education?.phd_school?.graduated}
-          //   checked={education?.high_school?.graduated}
+          checked={!!education?.phd_school?.graduated}
           label='졸업 여부 체크'
-          onChange={handlelPhdChange}
+          onChange={handlePhdChange}
         />
       </div>
-      <Button type='button' onClick={addOverseasExperience}>
-        해외 경험 추가
-      </Button>
+      {/* 해외 경험 리스트 렌더링 */}
+      <h2>해외 경험</h2>
+      {education?.overseas_experience.map((experience, index) => (
+        <div key={index}>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Input
+              type='text'
+              name='type'
+              label='유형'
+              value={experience?.type || ''}
+              onChange={(e) => handleOverseasExperienceChange(index, e)}
+            />
+            <Input
+              type='text'
+              name='country'
+              label='국가'
+              value={experience?.country || ''}
+              onChange={(e) => handleOverseasExperienceChange(index, e)}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Input
+              type='date'
+              name='start_date'
+              label='출국일'
+              value={experience?.start_date || ''}
+              onChange={(e) => handleOverseasExperienceChange(index, e)}
+            />
+            <Input
+              type='date'
+              name='end_date'
+              label='귀국일'
+              value={experience?.end_date || ''}
+              onChange={(e) => handleOverseasExperienceChange(index, e)}
+            />
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <Button onClick={() => removeOverseasExperience(index)}>삭제</Button>
+          </div>
+        </div>
+      ))}
+      <div style={{ textAlign: 'center' }}>
+        <Button type='button' onClick={addOverseasExperience}>
+          해외 경험 추가
+        </Button>
+      </div>
     </div>
   );
 };

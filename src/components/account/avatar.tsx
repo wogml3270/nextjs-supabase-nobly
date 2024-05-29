@@ -8,7 +8,7 @@ import { createClient } from '@/utils/supabase/client';
 
 interface AvatarProps {
   uid: string | null;
-  url: string | null;
+  url?: string | null;
   size: number;
   onUpload: (url: string) => void;
   className: string;
@@ -26,7 +26,7 @@ const Avatar: React.FC<AvatarProps> = ({
   setUploading,
 }) => {
   const supabase = createClient();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(url);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(url || null);
 
   useEffect(() => {
     const downloadImage = async (path: string) => {

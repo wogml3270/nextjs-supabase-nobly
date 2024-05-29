@@ -5,6 +5,7 @@ export interface InputProps {
   type: string;
   label?: string | null;
   value?: string | number | boolean | readonly string[] | null;
+  checked?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   id?: string;
   name?: string;
@@ -21,7 +22,7 @@ export interface InputProps {
 export interface TextareaProps {
   label?: string | null;
   value?: string | null;
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   name?: string;
   id?: string;
   placeholder?: string;

@@ -19,6 +19,7 @@ const Home = () => {
         data: { user },
         error,
       } = await supabase.auth.getUser();
+
       if (error || !user) {
         return;
       }
@@ -33,12 +34,17 @@ const Home = () => {
       {userInfo && userInfo ? (
         <>
           <h2>로그인 되었습니다</h2>
-          <p>{userInfo?.user_metadata.email} 님</p>
+          <p>
+            {userInfo?.role === 'authenticated' ? '관리자' : '사용자'}{' '}
+            {userInfo?.user_metadata.email} 님
+          </p>
           <p>마지막 로그인 시간: {userInfo?.last_sign_in_at}</p>
-          <SignoutButton>로그아웃</SignoutButton>
-          <Link href='/account'>
-            <Button>프로필</Button>
-          </Link>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <SignoutButton>로그아웃</SignoutButton>
+            <Link href='/account'>
+              <Button>프로필</Button>
+            </Link>
+          </div>
         </>
       ) : (
         <Link href='/login'>

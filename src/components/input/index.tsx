@@ -10,6 +10,7 @@ export const Input: React.FC<InputProps> = ({
   type,
   label,
   value,
+  checked,
   onChange,
   id,
   name,
@@ -55,8 +56,7 @@ export const Input: React.FC<InputProps> = ({
           <input
             type='checkbox'
             className={styles.input_checkbox}
-            value={typeof value === 'boolean' ? '' : value ?? ''}
-            checked={!!value}
+            checked={checked}
             onChange={onChange}
             id={id}
             name={name}

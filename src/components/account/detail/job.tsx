@@ -83,7 +83,7 @@ const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <h2>직장 정보</h2>
+      <h1>직장 정보</h1>
       <Input
         type='text'
         name='company_name'
@@ -183,13 +183,23 @@ const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
               onChange={(e) => handleCareerHistoryChange(index, e)}
               name='name'
               placeholder='회사명'
+              label='회사명'
             />
             <Input
-              type='text'
-              value={career.date}
+              type='date'
+              value={career.start_date}
               onChange={(e) => handleCareerHistoryChange(index, e)}
-              name='date'
+              name='start_date'
               placeholder='날짜'
+              label='입사일'
+            />
+            <Input
+              type='date'
+              value={career.end_date}
+              onChange={(e) => handleCareerHistoryChange(index, e)}
+              name='end_date'
+              placeholder='날짜'
+              label='퇴사일'
             />
             <Button type='button' onClick={() => removeCareerHistory(index)}>
               삭제

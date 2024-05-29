@@ -161,20 +161,28 @@ const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
             onChange={handleInputChange}
           />
         </div>
-        <Input
-          type='date'
-          label='나이'
-          value={formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : ''}
-          name='age'
-          onChange={handleInputChange}
-        />
-        <span>
-          만{' '}
-          {calculateAgeFromBirthday(
-            formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : '',
-          )}{' '}
-          세
-        </span>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Input
+            type='date'
+            label='나이'
+            value={formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : ''}
+            name='age'
+            onChange={handleInputChange}
+          />
+          <span style={{ width: '100%' }}>
+            만{' '}
+            {calculateAgeFromBirthday(
+              formData.age ? dayjs(formData.age).format('YYYY-MM-DD') : '',
+            )}{' '}
+            세
+          </span>
+        </div>
         <div>
           <Input
             type='text'

@@ -7,7 +7,7 @@ export interface UserType {
   origin_address?: string | null; // 주민등록상 주소
   author_type?: string | null; // 작성자 유형
   age?: string | null; // 나이 (DATE)
-  avatar_url: string | null; // 프로필 사진
+  avatar_url?: string | null | undefined; // 프로필 사진
 }
 
 interface MaritalStatusType {
@@ -56,10 +56,8 @@ export interface UserDetailType {
   membership_fee_success?: number; // 성혼비
   another_phone?: string[];
   charge_manager?: string | null; // 담당 매니저 이름
-  manager_type?: {
-    C?: string; // 상담 매니저 이름
-    M?: string; // 매칭 매니저 이름
-  } | null;
+  counseling_manager?: string | null; // 상담 매니저 이름
+  maching_manager?: string | null; // 매칭 매니저 이름
   number_of_contracts?: number | null; // 약정 횟수
   service_period_start?: string | null; // 서비스 계약 시작 날짜 (DATE)
   service_period_end?: string | null; // 서비스 계약 종료 날짜 (DATE)
@@ -78,8 +76,9 @@ export interface UserDetailType {
     employment_type: string; // 고용 형태 (정규직, 계약직 등)
     company_address: string; // 회사 주소
     career_history: {
-      name: string;
-      date: string;
+      name: string; // 이전 직장 이름
+      start_date: string; // 입사일
+      end_date: string; // 퇴사일
     }[]; // 경력 사항 (이전 근무한 회사들)
     hire_date: string; // 입사 년월
     salary: {

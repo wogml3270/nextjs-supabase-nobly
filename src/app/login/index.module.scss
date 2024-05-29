@@ -44,5 +44,11 @@
         border-radius: 10px;
       }
     }
+
+    & .message {
+      color: rgb(185, 0, 0);
+      font-weight: bold;
+      font-size: 18px;
+    }
   }
 }

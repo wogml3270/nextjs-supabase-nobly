@@ -5,6 +5,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { type User } from '@supabase/supabase-js';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
 
 import { createClient } from '@/utils/supabase/client';
 import { UserDetailType } from '@/types/account';
@@ -16,6 +17,7 @@ import { MaritalStatus } from '@/components/input/maritalStatus';
 import AnotherPhone from '@/components/input/anotherPhone';
 import { JobInformation } from './job';
 import { EducationForm } from './education';
+import { Button } from '@/components/button';
 
 interface AccountFormProps {
   user: User | null;
@@ -25,13 +27,15 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
   // supabase 클라이언트 생성자
   const supabase = createClient();
 
+  const router = useRouter();
+
   const [formData, setFormData] = useState<UserDetailType | null | undefined>(null);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getProfileDetail = useCallback(async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
 
       const { data, error } = await supabase
         .from('profiles_detail')
@@ -47,7 +51,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
     } catch (error) {
       alert('에러 발생');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [supabase, user?.id]);
 
@@ -56,6 +60,21 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
       getProfileDetail();
     }
   }, [getProfileDetail, user?.id]);
+
+  const updateProfile = async () => {
+    if (!user) return;
+
+    const { error } = await supabase.from('profiles_detail').upsert(formData);
+
+    if (error) {
+      console.log(error);
+      alert('프로필 상세 업데이트 실패');
+      return;
+    }
+
+    alert('프로필 상세 업데이트 성공');
+    router.refresh();
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -106,10 +125,10 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    console.log(formData?.education);
+    console.log(formData);
   }, [formData]);
 
-  if (loading) {
+  if (isLoading) {
     return <Loading />;
   }
 
@@ -159,16 +178,16 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
         <Input
           type='text'
           label='상담 매니저'
-          name='C'
-          value={formData?.manager_type?.C || ''}
+          name='counseling_manager'
+          value={formData?.counseling_manager || ''}
           onChange={handleInputChange}
           placeholder='상담 매니저 이름을 입력하세요'
         />
         <Input
           type='text'
           label='매칭 매니저'
-          name='M'
-          value={formData?.manager_type?.M || ''}
+          name='maching_manager'
+          value={formData?.maching_manager || ''}
           onChange={handleInputChange}
           placeholder='매칭 매니저 이름을 입력하세요'
         />
@@ -201,6 +220,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
         label='회원 메모'
         onChange={handleInputChange}
       />
+      {/* 결혼 상태 컴포넌트 */}
       <MaritalStatus
         initialFormData={formData?.marital_status}
         onChange={handleInputChange}
@@ -269,6 +289,11 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
       />
       <JobInformation job={formData?.job} setFormData={setFormData} />
       <EducationForm education={formData?.education} setFormData={setFormData} />
+      <div style={{ textAlign: 'right' }}>
+        <Button onClick={updateProfile} disabled={isLoading}>
+          {isLoading ? 'loading...' : '완료'}
+        </Button>
+      </div>
     </div>
   );
 };
