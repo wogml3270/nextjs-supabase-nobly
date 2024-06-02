@@ -8,13 +8,14 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 
 import { createClient } from '@/utils/supabase/client';
-import { UserDetailType } from '@/types/account';
+import { UserDetailProfile } from '@/types/account';
+import { FlexBox } from '@/containers/flexBox';
 
 import Loading from '@/app/loading';
 import styles from './index.module.scss';
 import { Input, Textarea } from '@/components/input';
 import { MaritalStatus } from '@/components/input/maritalStatus';
-import AnotherPhone from '@/components/input/anotherPhone';
+import { AnotherPhone } from '@/components/input/anotherPhone';
 import { JobInformation } from './job';
 import { EducationForm } from './education';
 import { Button } from '@/components/button';
@@ -29,17 +30,67 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
 
   const router = useRouter();
 
-  const [formData, setFormData] = useState<UserDetailType | null | undefined>(null);
+  const [formData, setFormData] = useState<UserDetailProfile | null>({
+    partner_id: null,
+    membership_papers: {
+      id_card: '',
+      photo: '',
+      family_certificate: '',
+      graduation_certificate: '',
+      employment_certificate: '',
+      license_copy: '',
+    },
+    membership_fee: null,
+    membership_fee_success: null,
+    another_phone: null,
+    charge_manager: null,
+    counseling_manager: null,
+    maching_manager: null,
+    number_of_contracts: null,
+    service_period_start: null,
+    service_period_end: null,
+    memo: null,
+    marital_status: {
+      status: '',
+      reason: null,
+      children: {
+        birth: false,
+        custody: {
+          self: false,
+          spouse: false,
+        },
+        sons: 0,
+        daughters: 0,
+      },
+    },
+    living_type: null,
+    housing_type: null,
+    residence_type: null,
+    residence_level: null,
+    parents_owner_check: null,
+    property: null,
+  });
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getProfileDetail = useCallback(async () => {
+  // 상세 프로필 가져오기 로직
+  const fetchProfileDetail = useCallback(async () => {
+    if (!user?.id) return;
+
     try {
       setIsLoading(true);
 
       const { data, error } = await supabase
         .from('profiles_detail')
-        .select('*')
+        .select(
+          `partner_id, membership_papers, membership_fee, 
+          membership_fee_success, another_phone, charge_manager, 
+          counseling_manager, maching_manager, number_of_contracts, 
+          service_period_start, service_period_end, memo, 
+          marital_status, living_type, housing_type, 
+          residence_type, residence_level, parents_owner_check, 
+          property`,
+        )
         .eq('id', user?.id)
         .maybeSingle();
 
@@ -57,10 +108,11 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
 
   useEffect(() => {
     if (user?.id) {
-      getProfileDetail();
+      fetchProfileDetail();
     }
-  }, [getProfileDetail, user?.id]);
+  }, [fetchProfileDetail, user?.id]);
 
+  // 상세 프로필 업데이트 로직
   const updateProfile = async () => {
     if (!user) return;
 
@@ -85,7 +137,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
       case 'number': {
         const numericValue = Number(value);
         setFormData((prev) => ({
-          ...prev!,
+          ...prev,
           [name]: numericValue < 0 ? 0 : numericValue,
         }));
         break;
@@ -93,35 +145,22 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
       case 'date': {
         const formattedDate = dayjs(value).format('YYYY-MM-DD');
         setFormData((prev) => ({
-          ...prev!,
+          ...prev,
           [name]: formattedDate,
         }));
         break;
       }
       default:
         setFormData((prevState) => ({
-          ...prevState!,
+          ...prevState,
           [name]: value,
         }));
         break;
     }
-
-    if (formData!.marital_status) {
-      setFormData((prevState: any) => {
-        return {
-          ...prevState!,
-          marital_status: {
-            ...prevState!.marital_status,
-            [name]: value,
-          },
-        };
-      });
-    } else {
-      setFormData((prevState) => ({
-        ...prevState!,
-        [name]: value,
-      }));
-    }
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   useEffect(() => {
@@ -135,7 +174,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
   return (
     <div className={styles.profiles_detail}>
       <h1>상세 프로필</h1>
-      <div>
+      <FlexBox dir='row'>
         <Input
           type='text'
           name='partner_id'
@@ -149,6 +188,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
           value={formData?.membership_fee || ''}
           label='가입비'
           onChange={handleInputChange}
+          placeholder='가입비 입력'
         />
         <Input
           type='text'
@@ -156,25 +196,28 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
           value={formData?.membership_fee_success || ''}
           label='성혼비'
           onChange={handleInputChange}
+          placeholder='성혼비 입력'
         />
-      </div>
-      <div>
+      </FlexBox>
+      <FlexBox dir='row'>
         <Input
           type='text'
           name='charge_manager'
           value={formData?.charge_manager || ''}
           label='담당 매니저'
           onChange={handleInputChange}
+          placeholder='담당 매니저 입력'
         />
         <Input
           type='number'
           name='number_of_contracts'
-          value={formData?.number_of_contracts || 0}
+          value={formData?.number_of_contracts || null}
           label='약정 횟수'
           onChange={handleInputChange}
+          placeholder='약정 횟수 입력'
         />
-      </div>
-      <div>
+      </FlexBox>
+      <FlexBox dir='row'>
         <Input
           type='text'
           label='상담 매니저'
@@ -191,14 +234,14 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
           onChange={handleInputChange}
           placeholder='매칭 매니저 이름을 입력하세요'
         />
-      </div>
-      <div>
+      </FlexBox>
+      <FlexBox dir='col'>
         <AnotherPhone
           anotherPhone={formData?.another_phone || []}
           setFormData={setFormData}
         />
-      </div>
-      <div>
+      </FlexBox>
+      <FlexBox dir='row'>
         <Input
           type='date'
           name='service_period_start'
@@ -213,7 +256,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
           label='서비스 종료일'
           onChange={handleInputChange}
         />
-      </div>
+      </FlexBox>
       <Textarea
         value={formData?.memo || ''}
         name='memo'
@@ -221,10 +264,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
         onChange={handleInputChange}
       />
       {/* 결혼 상태 컴포넌트 */}
-      <MaritalStatus
-        initialFormData={formData?.marital_status}
-        onChange={handleInputChange}
-      />
+      <MaritalStatus maritalStatus={formData?.marital_status} setFormData={setFormData} />
       <Input
         type='radio'
         name='living_type'
@@ -243,7 +283,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
         label='본인 주거 형태'
         onChange={handleInputChange}
         options={[
-          { value: '자가', label: '전세' },
+          { value: '자가', label: '자가' },
           { value: '전세', label: '전세' },
           { value: '월세', label: '월세' },
         ]}
@@ -263,32 +303,35 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
           { value: '기타', label: '기타' },
         ]}
       />
-      <Input
-        type='number'
-        name='residence_level'
-        value={formData?.residence_level || ''}
-        label='주거지 면적'
-        onChange={handleInputChange}
-      />
-      <Input
-        type='radio'
-        name='parents_owner_check'
-        value={formData?.parents_owner_check || ''}
-        label='거주지 부모 소유'
-        onChange={handleInputChange}
-        options={[
-          { value: true.toString(), label: '예' },
-          { value: false.toString(), label: '아니오' },
-        ]}
-      />
+      <FlexBox dir='row' gap='30px'>
+        <Input
+          type='number'
+          name='residence_level'
+          value={formData?.residence_level || ''}
+          label='주거지 면적'
+          onChange={handleInputChange}
+          unit='평'
+        />
+        <Input
+          type='radio'
+          name='parents_owner_check'
+          value={formData?.parents_owner_check || ''}
+          label='거주지 부모 소유'
+          onChange={handleInputChange}
+          options={[
+            { value: true.toString(), label: '예' },
+            { value: false.toString(), label: '아니오' },
+          ]}
+        />
+      </FlexBox>
       <Textarea
         name='property'
         value={formData?.property || ''}
         label='본인 재산 (구체적인 정보 기재)'
         onChange={handleInputChange}
       />
-      <JobInformation job={formData?.job} setFormData={setFormData} />
-      <EducationForm education={formData?.education} setFormData={setFormData} />
+      {/* <JobInformation job={formData?.job} setFormData={setFormData} />
+      <EducationForm education={formData?.education} setFormData={setFormData} /> */}
       <div style={{ textAlign: 'right' }}>
         <Button onClick={updateProfile} disabled={isLoading}>
           {isLoading ? 'loading...' : '완료'}

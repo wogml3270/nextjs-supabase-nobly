@@ -12,18 +12,31 @@
     color: #797979;
   }
 
-  &_text {
-    padding: 5px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+  &_wrap {
+    position: relative;
 
-    &:focus {
-      outline: none;
-      border-color: #007bff;
+    &_text {
+      padding: 5px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+
+    }
+
+    &_unit {
+      position: absolute;
+      right: 25px;
+      bottom: 5px;
+      font-weight: 700;
     }
   }
+
 
   &_textarea {
     height: 250px;
@@ -47,6 +60,7 @@
   &_radio {
     &_wrap {
       display: flex;
+
       & label {
         margin-right: 1rem;
       }

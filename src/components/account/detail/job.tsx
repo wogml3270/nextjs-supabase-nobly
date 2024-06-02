@@ -2,6 +2,7 @@
 import React from 'react';
 
 import { type UserDetailType } from '@/types/account';
+import { FlexBox } from '@/containers/flexBox';
 
 import { Input } from '@/components/input';
 import { Button } from '@/components/button';
@@ -19,7 +20,7 @@ const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
   ) => {
     const { name, value } = e.target;
     setFormData((prevState: any) => ({
-      ...prevState,
+      ...prevState!,
       job: {
         ...prevState.job,
         [name]: value,
@@ -30,7 +31,7 @@ const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
   const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState: any) => ({
-      ...prevState,
+      ...prevState!,
       job: {
         ...prevState.job,
         salary: {
@@ -52,7 +53,7 @@ const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
       [name]: value,
     };
     setFormData((prevState: any) => ({
-      ...prevState,
+      ...prevState!,
       job: {
         ...prevState.job,
         career_history: newCareerHistory,
@@ -62,7 +63,7 @@ const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
 
   const addCareerHistory = () => {
     setFormData((prevState: any) => ({
-      ...prevState,
+      ...prevState!,
       job: {
         ...prevState.job,
         career_history: [...(prevState?.job?.career_history || []), ''],
@@ -84,88 +85,96 @@ const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <h1>직장 정보</h1>
-      <Input
-        type='text'
-        name='company_name'
-        value={job?.company_name || ''}
-        label='회사명'
-        onChange={handleInputChange}
-        placeholder='회사명'
-      />
-      <Input
-        type='text'
-        name='occupation'
-        value={job?.occupation || ''}
-        label='직업'
-        onChange={handleInputChange}
-        placeholder='직업/업무 분야'
-      />
-      <Input
-        type='text'
-        name='position'
-        value={job?.position || ''}
-        label='직위'
-        onChange={handleInputChange}
-        placeholder='직위'
-      />
-      <Input
-        type='text'
-        name='employment_type'
-        value={job?.employment_type || ''}
-        label='고용 형태'
-        onChange={handleInputChange}
-        placeholder='고용 형태'
-      />
-      <Input
-        type='text'
-        name='company_address'
-        value={job?.company_address || ''}
-        label='회사 주소'
-        onChange={handleInputChange}
-        placeholder='회사 주소'
-      />
-      <Input
-        type='date'
-        name='hire_date'
-        value={job?.hire_date || ''}
-        label='입사 년월'
-        onChange={handleInputChange}
-        placeholder='입사 년월'
-      />
-      <Input
-        type='number'
-        name='years_of_service'
-        value={job?.years_of_service || ''}
-        label='재직 연차'
-        onChange={handleInputChange}
-        placeholder='재직 연차'
-      />
-      <h4>연봉</h4>
-      <Input
-        type='number'
-        name='pre_tax'
-        value={job?.salary?.pre_tax || ''}
-        label='세전 연봉'
-        onChange={handleSalaryChange}
-        placeholder='세전 연봉'
-      />
-      <Input
-        type='number'
-        name='after_tax'
-        value={job?.salary?.after_tax || ''}
-        label='세후 연봉'
-        onChange={handleSalaryChange}
-        placeholder='세후 연봉'
-      />
-      <Input
-        type='number'
-        name='other_income'
-        value={job?.salary?.other_income || ''}
-        label='그 외 수입'
-        onChange={handleSalaryChange}
-        placeholder='그 외 수입'
-      />
-      <h4>경력 사항</h4>
+      <FlexBox dir='row'>
+        <Input
+          type='text'
+          name='company_name'
+          value={job?.company_name || ''}
+          label='회사명'
+          onChange={handleInputChange}
+          placeholder='회사명'
+        />
+        <Input
+          type='text'
+          name='occupation'
+          value={job?.occupation || ''}
+          label='직업'
+          onChange={handleInputChange}
+          placeholder='직업/업무 분야'
+        />
+        <Input
+          type='text'
+          name='position'
+          value={job?.position || ''}
+          label='직위'
+          onChange={handleInputChange}
+          placeholder='직위'
+        />
+      </FlexBox>
+      <FlexBox dir='row'>
+        <Input
+          type='text'
+          name='employment_type'
+          value={job?.employment_type || ''}
+          label='고용 형태'
+          onChange={handleInputChange}
+          placeholder='고용 형태'
+        />
+        <Input
+          type='text'
+          name='company_address'
+          value={job?.company_address || ''}
+          label='회사 주소'
+          onChange={handleInputChange}
+          placeholder='회사 주소'
+        />
+      </FlexBox>
+      <FlexBox dir='row'>
+        <Input
+          type='date'
+          name='hire_date'
+          value={job?.hire_date || ''}
+          label='입사 년월'
+          onChange={handleInputChange}
+          placeholder='입사 년월'
+        />
+        <Input
+          type='number'
+          name='years_of_service'
+          value={job?.years_of_service || ''}
+          label='재직 연차'
+          onChange={handleInputChange}
+          placeholder='재직 연차'
+        />
+      </FlexBox>
+      <h2>연봉</h2>
+      <FlexBox dir='row'>
+        <Input
+          type='number'
+          name='pre_tax'
+          value={job?.salary?.pre_tax || ''}
+          label='세전 연봉'
+          onChange={handleSalaryChange}
+          placeholder='세전 연봉'
+        />
+        <Input
+          type='number'
+          name='after_tax'
+          value={job?.salary?.after_tax || ''}
+          label='세후 연봉'
+          onChange={handleSalaryChange}
+          placeholder='세후 연봉'
+        />
+        <Input
+          type='number'
+          name='other_income'
+          value={job?.salary?.other_income || ''}
+          label='그 외 수입'
+          onChange={handleSalaryChange}
+          placeholder='그 외 수입'
+        />
+      </FlexBox>
+      <h2>경력 사항</h2>
       {job &&
         job?.career_history?.map((career, index) => (
           <div

@@ -17,6 +17,7 @@ export interface InputProps {
     value: string | boolean;
     label: string;
   }[];
+  unit?: string | null;
 }
 
 export interface TextareaProps {

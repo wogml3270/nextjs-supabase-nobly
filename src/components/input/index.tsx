@@ -19,12 +19,13 @@ export const Input: React.FC<InputProps> = ({
   disabled,
   required,
   options,
+  unit,
 }) => {
   if (type === 'radio' && options) {
     return (
       <div className={styles.input_container}>
+        <label className={styles.input_label}>{label || ''}</label>
         <div className={styles.input_radio_wrap}>
-          <label className={styles.radio_label}>{label || ''}</label>
           {options.map((option: any) => (
             <div key={option.value} className={styles.input_radio}>
               <input
@@ -72,22 +73,27 @@ export const Input: React.FC<InputProps> = ({
     );
   }
 
+  // another
+  // text, number, date ...
   return (
     <div className={styles.input_container}>
       <label htmlFor={name} className={styles.input_label}>
         {label || ''}
       </label>
-      <input
-        type={type}
-        className={styles.input_text}
-        value={typeof value === 'boolean' ? '' : value ?? ''}
-        onChange={onChange}
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        readOnly={readOnly}
-        disabled={disabled}
-      />
+      <div className={styles.input_wrap}>
+        <input
+          type={type}
+          className={styles.input_wrap_text}
+          value={typeof value === 'boolean' ? '' : value ?? ''}
+          onChange={onChange}
+          id={id}
+          name={name}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          disabled={disabled}
+        />
+        <span className={styles.input_wrap_unit}>{unit || ''}</span>
+      </div>
     </div>
   );
 };

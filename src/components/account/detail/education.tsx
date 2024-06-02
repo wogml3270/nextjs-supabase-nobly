@@ -97,8 +97,6 @@ const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
     });
   };
 
-  if (!education) return null;
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       <h1>학력 정보</h1>
