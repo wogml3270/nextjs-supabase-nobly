@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 
-import { type UserDetailType } from '@/types/account';
+import { type UserDetailProfile } from '@/types/account';
 
 import { Input } from '@/components/input';
 import { Button } from '@/components/button';
@@ -10,7 +10,7 @@ interface EducationFormProps {
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const EducationForm: React.FC<UserDetailType & EducationFormProps> = ({
+const EducationForm: React.FC<UserDetailProfile & EducationFormProps> = ({
   education,
   setFormData,
 }) => {

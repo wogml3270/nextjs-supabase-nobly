@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 
-import { type UserDetailType } from '@/types/account';
+import { type UserDetailProfile } from '@/types/account';
 import { FlexBox } from '@/containers/flexBox';
 
 import { Input } from '@/components/input';
@@ -11,7 +11,7 @@ interface JobInformationProps {
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const JobInformation: React.FC<UserDetailType & JobInformationProps> = ({
+const JobInformation: React.FC<UserDetailProfile & JobInformationProps> = ({
   job,
   setFormData,
 }) => {

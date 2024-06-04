@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-alert */
 /* eslint-disable react/no-array-index-key */
 
 'use client';
@@ -8,7 +10,6 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 
 import { createClient } from '@/utils/supabase/client';
-import { UserDetailProfile } from '@/types/account';
 import { FlexBox } from '@/containers/flexBox';
 
 import Loading from '@/app/loading';
@@ -18,7 +19,10 @@ import { MaritalStatus } from '@/components/input/maritalStatus';
 import { AnotherPhone } from '@/components/input/anotherPhone';
 import { JobInformation } from './job';
 import { EducationForm } from './education';
+import { FamilyInfo } from './familyInfo';
 import { Button } from '@/components/button';
+import { MembershipPapersForm } from './membershipPapers';
+import { userDetailProfile } from './initialFormData';
 
 interface AccountFormProps {
   user: User | null;
@@ -30,46 +34,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
 
   const router = useRouter();
 
-  const [formData, setFormData] = useState<UserDetailProfile | null>({
-    partner_id: null,
-    membership_papers: {
-      id_card: '',
-      photo: '',
-      family_certificate: '',
-      graduation_certificate: '',
-      employment_certificate: '',
-      license_copy: '',
-    },
-    membership_fee: null,
-    membership_fee_success: null,
-    another_phone: null,
-    charge_manager: null,
-    counseling_manager: null,
-    maching_manager: null,
-    number_of_contracts: null,
-    service_period_start: null,
-    service_period_end: null,
-    memo: null,
-    marital_status: {
-      status: '',
-      reason: null,
-      children: {
-        birth: false,
-        custody: {
-          self: false,
-          spouse: false,
-        },
-        sons: 0,
-        daughters: 0,
-      },
-    },
-    living_type: null,
-    housing_type: null,
-    residence_type: null,
-    residence_level: null,
-    parents_owner_check: null,
-    property: null,
-  });
+  const [formData, setFormData] = useState(userDetailProfile);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -82,23 +47,14 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
 
       const { data, error } = await supabase
         .from('profiles_detail')
-        .select(
-          `partner_id, membership_papers, membership_fee, 
-          membership_fee_success, another_phone, charge_manager, 
-          counseling_manager, maching_manager, number_of_contracts, 
-          service_period_start, service_period_end, memo, 
-          marital_status, living_type, housing_type, 
-          residence_type, residence_level, parents_owner_check, 
-          property`,
-        )
+        .select(`*`)
         .eq('id', user?.id)
         .maybeSingle();
 
       if (error) {
         console.log(error);
-      } else {
-        setFormData(data);
       }
+      setFormData(data ?? {});
     } catch (error) {
       alert('에러 발생');
     } finally {
@@ -136,8 +92,8 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
     switch (type) {
       case 'number': {
         const numericValue = Number(value);
-        setFormData((prev) => ({
-          ...prev,
+        setFormData((prevState) => ({
+          ...prevState,
           [name]: numericValue < 0 ? 0 : numericValue,
         }));
         break;
@@ -163,8 +119,18 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
     }));
   };
 
+  // 입력값 초기화
+  const handleReset = () => {
+    if (confirm('입력한 정보를 초기화 하시겠습니까?')) {
+      setFormData({
+        ...userDetailProfile,
+        id: user?.id,
+      });
+    }
+  };
+
   useEffect(() => {
-    console.log(formData);
+    console.log(formData?.family_info);
   }, [formData]);
 
   if (isLoading) {
@@ -198,6 +164,9 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
           onChange={handleInputChange}
           placeholder='성혼비 입력'
         />
+      </FlexBox>
+      <FlexBox dir='row'>
+        <MembershipPapersForm setFormData={setFormData} />
       </FlexBox>
       <FlexBox dir='row'>
         <Input
@@ -330,13 +299,15 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
         label='본인 재산 (구체적인 정보 기재)'
         onChange={handleInputChange}
       />
-      {/* <JobInformation job={formData?.job} setFormData={setFormData} />
-      <EducationForm education={formData?.education} setFormData={setFormData} /> */}
-      <div style={{ textAlign: 'right' }}>
+      <JobInformation job={formData?.job} setFormData={setFormData} />
+      <EducationForm education={formData?.education} setFormData={setFormData} />
+      <FamilyInfo familyInfo={formData?.family_info} setFormData={setFormData} />
+      <FlexBox dir='row' justify='space-between' width={100}>
         <Button onClick={updateProfile} disabled={isLoading}>
           {isLoading ? 'loading...' : '완료'}
         </Button>
-      </div>
+        <Button onClick={handleReset}>초기화</Button>
+      </FlexBox>
     </div>
   );
 };

@@ -41,7 +41,7 @@ const Home = () => {
           <p>마지막 로그인 시간: {userInfo?.last_sign_in_at}</p>
           <div style={{ display: 'flex', gap: '20px' }}>
             <SignoutButton>로그아웃</SignoutButton>
-            <Link href='/account'>
+            <Link href='/profile'>
               <Button>프로필</Button>
             </Link>
           </div>

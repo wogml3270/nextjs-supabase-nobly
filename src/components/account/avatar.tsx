@@ -11,7 +11,7 @@ interface AvatarProps {
   url?: string | null;
   size: number;
   onUpload: (url: string) => void;
-  className: string;
+  className?: string;
   uploading: boolean;
   setUploading: (uploading: boolean) => void;
 }
