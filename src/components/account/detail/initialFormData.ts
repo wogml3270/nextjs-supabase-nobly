@@ -40,32 +40,30 @@ export const userDetailProfile: UserDetailProfile = {
   parents_owner_check: false,
   property: '',
 
-  job:
-    {
-      salary: {
-        pre_tax: '',
-        after_tax: '',
-        other_income: '',
-      },
-      position: '',
-      hire_date: '' || null,
-      occupation: '',
-      company_name: '',
-      career_history: [],
-      company_address: '',
-      employment_type: '',
-      years_of_service: 0,
-    } || null,
+  job: {
+    salary: {
+      pre_tax: '',
+      after_tax: '',
+      other_income: '',
+    },
+    position: '',
+    hire_date: '' || null,
+    occupation: '',
+    company_name: '',
+    career_history: [],
+    company_address: '',
+    employment_type: '',
+    years_of_service: 0,
+  },
 
-  education:
-    {
-      college: null,
-      phd_school: null,
-      university: null,
-      high_school: null,
-      graduate_school: null,
-      overseas_experience: [],
-    } || null,
+  education: {
+    college: null,
+    phd_school: null,
+    university: null,
+    high_school: null,
+    graduate_school: null,
+    overseas_experience: [],
+  },
 
   family_info: [],
 };

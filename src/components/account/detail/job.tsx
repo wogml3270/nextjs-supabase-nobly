@@ -6,21 +6,60 @@ import { FlexBox } from '@/containers/flexBox';
 
 import { Input } from '@/components/input';
 import { Button } from '@/components/button';
+import { Select } from '@/components/select';
+import { occupations } from '@/components/select/options';
 
 interface JobInformationProps {
+  job: UserDetailProfile['job'];
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const JobInformation: React.FC<UserDetailProfile & JobInformationProps> = ({
-  job,
-  setFormData,
-}) => {
+const JobInformation: React.FC<JobInformationProps> = ({ job, setFormData }) => {
+  // 기본 핸들러
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+    setFormData((prevState: any) => {
+      if (name === 'years_of_service') {
+        return {
+          ...prevState,
+          job: {
+            ...prevState.job,
+            [name]: Number(value),
+          },
+        };
+      }
+      return {
+        ...prevState,
+        job: {
+          ...prevState.job,
+          [name]: value,
+        },
+      };
+    });
+  };
+
+  // salary 핸들러
+  const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData((prevState: any) => ({
-      ...prevState!,
+      ...prevState,
+      job: {
+        ...prevState.job,
+        salary: {
+          ...prevState.job?.salary,
+          [name]: Number(value),
+        },
+      },
+    }));
+  };
+
+  // select box 핸들러
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevState: any) => ({
+      ...prevState,
       job: {
         ...prevState.job,
         [name]: value,
@@ -28,20 +67,7 @@ const JobInformation: React.FC<UserDetailProfile & JobInformationProps> = ({
     }));
   };
 
-  const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevState: any) => ({
-      ...prevState!,
-      job: {
-        ...prevState.job,
-        salary: {
-          ...prevState.job.salary,
-          [name]: Number(value),
-        },
-      },
-    }));
-  };
-
+  // 경력 사항 핸들러
   const handleCareerHistoryChange = (
     index: number,
     e: React.ChangeEvent<HTMLInputElement>,
@@ -61,6 +87,7 @@ const JobInformation: React.FC<UserDetailProfile & JobInformationProps> = ({
     }));
   };
 
+  // 경력 사항 추가 핸들러
   const addCareerHistory = () => {
     setFormData((prevState: any) => ({
       ...prevState!,
@@ -71,6 +98,7 @@ const JobInformation: React.FC<UserDetailProfile & JobInformationProps> = ({
     }));
   };
 
+  // 경력 사항 삭제 핸들러
   const removeCareerHistory = (index: number) => {
     const newCareerHistory = job?.career_history.filter((_, i) => i !== index) || [];
     setFormData((prevState: any) => ({
@@ -94,13 +122,14 @@ const JobInformation: React.FC<UserDetailProfile & JobInformationProps> = ({
           onChange={handleInputChange}
           placeholder='회사명'
         />
-        <Input
-          type='text'
+        <Select
           name='occupation'
           value={job?.occupation || ''}
           label='직업'
-          onChange={handleInputChange}
-          placeholder='직업/업무 분야'
+          placeholder='직업을 선택하세요'
+          onChange={handleSelectChange}
+          sortOptions='asc'
+          options={occupations}
         />
         <Input
           type='text'
@@ -134,9 +163,9 @@ const JobInformation: React.FC<UserDetailProfile & JobInformationProps> = ({
           type='date'
           name='hire_date'
           value={job?.hire_date || ''}
-          label='입사 년월'
+          label='입사 날짜'
           onChange={handleInputChange}
-          placeholder='입사 년월'
+          placeholder='입사 날짜'
         />
         <Input
           type='number'

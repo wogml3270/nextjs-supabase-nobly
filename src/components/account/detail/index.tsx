@@ -54,7 +54,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
       if (error) {
         console.log(error);
       }
-      setFormData(data ?? {});
+      setFormData(data);
     } catch (error) {
       alert('에러 발생');
     } finally {
@@ -100,8 +100,8 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
       }
       case 'date': {
         const formattedDate = dayjs(value).format('YYYY-MM-DD');
-        setFormData((prev) => ({
-          ...prev,
+        setFormData((prevState) => ({
+          ...prevState,
           [name]: formattedDate,
         }));
         break;
@@ -113,10 +113,6 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
         }));
         break;
     }
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
   };
 
   // 입력값 초기화
@@ -130,7 +126,7 @@ const AccountDetailsPage: React.FC<AccountFormProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    console.log(formData?.family_info);
+    console.log(formData);
   }, [formData]);
 
   if (isLoading) {

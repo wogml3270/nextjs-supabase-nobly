@@ -1,0 +1,29 @@
+.select {
+  &_container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  &_label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #797979;
+  }
+
+  &_box {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+  }
+}
