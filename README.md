@@ -41,16 +41,16 @@ yarn run build
 git remote add origin [저장소 url]
 
 # git 파일 추가
-git add . (ga)
+git add .
 
 # git 파일 저장 및 작업 내용
-git commit -m '[구분] 내용' (gc '[구분]: 내용')
+git commit -m '[구분] 내용'
 
 # git 업로드
-git push origin main (gpo main)
+git push origin main
 
 # git 다운로드
-git pull origin main (gpu)
+git pull origin main
 ```
 
 ## 구현 기능
