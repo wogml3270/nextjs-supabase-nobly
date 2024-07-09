@@ -21,18 +21,17 @@
 <br>
 
 ## 프로젝트 실행
+프로젝트를 다운로드 한 뒤
 
 ```bash
-# ubuntu 사용 시
+# 패키지 설치
+yarn
+
 # 프로젝트 시작
 yarn dev
-# or
-yd
 
 # 프로젝트 빌드
 yarn run build
-# or
-yb
 ```
 
 ## github 소스 배포
